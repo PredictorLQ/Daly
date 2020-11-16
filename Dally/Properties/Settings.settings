@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Dally.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="age_weight" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0,04</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
