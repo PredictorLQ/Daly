@@ -234,9 +234,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(595, 20);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(31, 13);
+            this.label3.Size = new System.Drawing.Size(33, 13);
             this.label3.TabIndex = 38;
-            this.label3.Text = "Года";
+            this.label3.Text = "Годы";
             // 
             // listBox3
             // 

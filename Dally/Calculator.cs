@@ -30,8 +30,8 @@ namespace Daly
                     {
                         diases.AddRange(data[i].DataSetDalyDiases.Where(u => DataDaly.ActivDataDiases_Id.Any(t => t == u.DataDiases_Id)).ToList());
                     }
-                    dataGridView1.Rows.Add(item.Name, diases.Average(t=>t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL));
-                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL));
+                    dataGridView1.Rows.Add(item.Name, diases.Average(t=>t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL), diases.Average(t => t.DataSurvivalMale.VRP));
+                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL), diases.Average(t => t.DataSurvivalFemale.VRP));
                 }
             }
         }

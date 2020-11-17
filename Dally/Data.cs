@@ -23,6 +23,7 @@ namespace Daly
         public static List<DataRegion> DataRegion;
         public static List<DataDiases> DataDiases;
         public static List<DataPopulation> DataPopulation;
+        public static List<DataVRP> DataVRP;
         public static List<int> DataYear;
         public static List<DataSetDaly> DataSetDaly;
         public static List<DataSurvivalPeriod_0_year> DataSurvivalPeriod_0_year;
@@ -237,7 +238,16 @@ namespace Daly
                                 for (int j = 2; j <= colums; j++)
                                 {
                                     int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
-
+                                    try
+                                    {
+                                        DataVRP.Add(new DataVRP
+                                        {
+                                            Year = year,
+                                            DataRegion_Id = region,
+                                            VRP = Convert.ToDouble(excelRange.Cells[i + 1, j].Value2)
+                                        });
+                                    }
+                                    catch { }
                                     List<DataSetDaly> data_dely = DataSetDaly.Where(u => u.Year == year && u.DataRegion_Id == region).ToList();
                                     if (data_dely.Any() == false)
                                     {
@@ -321,6 +331,7 @@ namespace Daly
         public void GetInfoData(Excel.Workbook excel_data, ProgressBar ProgressBar)
         {
             DataSetDaly = new List<DataSetDaly>();
+            DataVRP = new List<DataVRP>();
             List<Task> tasks1 = new List<Task>();
             ProgressBar.Minimum = 0;
             ProgressBar.Value = 0;
@@ -345,7 +356,7 @@ namespace Daly
             ProgressBar.Value = 0;
             ProgressBar.Maximum = DataSetDaly.Count() * 8 + 2;
             ProgressBar.Value++;
-            DataFrunction DataFrunction = new DataFrunction();
+            DataFunction DataFunction = new DataFunction();
             DataSurvivalPeriod_0_year = new List<DataSurvivalPeriod_0_year>();
             DataSurvivalPeriod_20_year = new List<DataSurvivalPeriod_20_year>();
             DataSurvivalPeriod_70_year = new List<DataSurvivalPeriod_70_year>();
@@ -357,8 +368,8 @@ namespace Daly
                 ProgressBar.Value++;
                 if (items.TrueResult == true)
                 {
-                    double mx_male = DataFrunction.GetSurvival_mx(items.MaleDied, items.MaleLife),
-                        mx_female = DataFrunction.GetSurvival_mx(items.FemaleDied, items.FemaleLife);
+                    double mx_male = DataFunction.GetSurvival_mx(items.MaleDied, items.MaleLife),
+                        mx_female = DataFunction.GetSurvival_mx(items.FemaleDied, items.FemaleLife);
                     foreach (var item in items.DataSetDalyDiases)
                     {
                         item.DataSurvivalMale = new DataSurvival
@@ -373,13 +384,13 @@ namespace Daly
                         {
                             try
                             {
-                                (double, double) data_qx = DataFrunction.GetSurvival_qx(items, item.DataDiases_Id);
+                                (double, double) data_qx = DataFunction.GetSurvival_qx(items, item.DataDiases_Id);
                                 item.DataSurvivalMale.qx = data_qx.Item1;
                                 item.DataSurvivalFemale.qx = data_qx.Item2;
                             }
                             catch { }
-                            item.DataSurvivalMale.px = DataFrunction.GetSurvival_px(item.DataSurvivalMale.qx);
-                            item.DataSurvivalFemale.px = DataFrunction.GetSurvival_px(item.DataSurvivalFemale.qx);
+                            item.DataSurvivalMale.px = DataFunction.GetSurvival_px(item.DataSurvivalMale.qx);
+                            item.DataSurvivalFemale.px = DataFunction.GetSurvival_px(item.DataSurvivalFemale.qx);
                         }
                         else if (items.DataPopulation_Id >= 21)
                         {
@@ -387,13 +398,13 @@ namespace Daly
                             {
                                 DataSetDaly data70 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 19 && u.DataRegion_Id == items.DataRegion_Id);
                                 int diases_id = data70.DataSetDalyDiases.First(u => u.DataDiases_Id == item.DataDiases_Id).Id;
-                                (double, double) data_px = DataFrunction.GetSurvival_px_two(diases_id, items.DataPopulation_Id);
+                                (double, double) data_px = DataFunction.GetSurvival_px_two(diases_id, items.DataPopulation_Id);
                                 item.DataSurvivalMale.px = data_px.Item1;
                                 item.DataSurvivalFemale.px = data_px.Item2;
                             }
                             catch { }
-                            item.DataSurvivalMale.qx = DataFrunction.GetSurvival_px(item.DataSurvivalMale.px);
-                            item.DataSurvivalFemale.qx = DataFrunction.GetSurvival_px(item.DataSurvivalFemale.px);
+                            item.DataSurvivalMale.qx = DataFunction.GetSurvival_px(item.DataSurvivalMale.px);
+                            item.DataSurvivalFemale.qx = DataFunction.GetSurvival_px(item.DataSurvivalFemale.px);
                         }
                         if (items.DataPopulation_Id == 9)
                         {
@@ -425,25 +436,25 @@ namespace Daly
                                 DataSetDalyDiases_Id = item.Id,
                                 male = new DataSurvivalPeriod_70_year_sex
                                 {
-                                    log_60_year = DataFrunction.GetSurvival_log10(px_year_60.Item1),
-                                    log_65_year = DataFrunction.GetSurvival_log10(px_year_65.Item1),
-                                    log_70_year = DataFrunction.GetSurvival_log10(item.DataSurvivalMale.px)
+                                    log_60_year = DataFunction.GetSurvival_log10(px_year_60.Item1),
+                                    log_65_year = DataFunction.GetSurvival_log10(px_year_65.Item1),
+                                    log_70_year = DataFunction.GetSurvival_log10(item.DataSurvivalMale.px)
                                 },
                                 female = new DataSurvivalPeriod_70_year_sex
                                 {
-                                    log_60_year = DataFrunction.GetSurvival_log10(px_year_60.Item2),
-                                    log_65_year = DataFrunction.GetSurvival_log10(px_year_65.Item2),
-                                    log_70_year = DataFrunction.GetSurvival_log10(item.DataSurvivalFemale.px)
+                                    log_60_year = DataFunction.GetSurvival_log10(px_year_60.Item2),
+                                    log_65_year = DataFunction.GetSurvival_log10(px_year_65.Item2),
+                                    log_70_year = DataFunction.GetSurvival_log10(item.DataSurvivalFemale.px)
                                 }
                             };
-                            _DataSurvivalPeriod_70_year.male.c = DataFrunction.GetSurvival_c(_DataSurvivalPeriod_70_year.male);
-                            _DataSurvivalPeriod_70_year.female.c = DataFrunction.GetSurvival_c(_DataSurvivalPeriod_70_year.female);
+                            _DataSurvivalPeriod_70_year.male.c = DataFunction.GetSurvival_c(_DataSurvivalPeriod_70_year.male);
+                            _DataSurvivalPeriod_70_year.female.c = DataFunction.GetSurvival_c(_DataSurvivalPeriod_70_year.female);
 
-                            _DataSurvivalPeriod_70_year.male.b = DataFrunction.GetSurvival_b(_DataSurvivalPeriod_70_year.male);
-                            _DataSurvivalPeriod_70_year.female.b = DataFrunction.GetSurvival_b(_DataSurvivalPeriod_70_year.female);
+                            _DataSurvivalPeriod_70_year.male.b = DataFunction.GetSurvival_b(_DataSurvivalPeriod_70_year.male);
+                            _DataSurvivalPeriod_70_year.female.b = DataFunction.GetSurvival_b(_DataSurvivalPeriod_70_year.female);
 
-                            _DataSurvivalPeriod_70_year.male.a = DataFrunction.GetSurvival_a(_DataSurvivalPeriod_70_year.male);
-                            _DataSurvivalPeriod_70_year.female.a = DataFrunction.GetSurvival_a(_DataSurvivalPeriod_70_year.female);
+                            _DataSurvivalPeriod_70_year.male.a = DataFunction.GetSurvival_a(_DataSurvivalPeriod_70_year.male);
+                            _DataSurvivalPeriod_70_year.female.a = DataFunction.GetSurvival_a(_DataSurvivalPeriod_70_year.female);
 
                             DataSurvivalPeriod_70_year.Add(_DataSurvivalPeriod_70_year);
                         }
@@ -463,25 +474,25 @@ namespace Daly
                         {
                             try
                             {
-                                (double, double) data_qx = DataFrunction.GetSurvival_qx(items, item.DataDiases_Id);
+                                (double, double) data_qx = DataFunction.GetSurvival_qx(items, item.DataDiases_Id);
                                 item.DataSurvivalMale.qx = data_qx.Item1;
                                 item.DataSurvivalFemale.qx = data_qx.Item2;
                             }
                             catch { }
-                            item.DataSurvivalMale.px = DataFrunction.GetSurvival_px(item.DataSurvivalMale.qx);
-                            item.DataSurvivalFemale.px = DataFrunction.GetSurvival_px(item.DataSurvivalFemale.qx);
+                            item.DataSurvivalMale.px = DataFunction.GetSurvival_px(item.DataSurvivalMale.qx);
+                            item.DataSurvivalFemale.px = DataFunction.GetSurvival_px(item.DataSurvivalFemale.qx);
                         }
                         try
                         {
-                            (double, double) data_l = DataFrunction.GetSurvival_l(items, item.DataDiases_Id);
+                            (double, double) data_l = DataFunction.GetSurvival_l(items, item.DataDiases_Id);
                             item.DataSurvivalMale.l = data_l.Item1;
                             item.DataSurvivalFemale.l = data_l.Item2;
                         }
                         catch { }
                         if (items.DataPopulation_Id <= 20)
                         {
-                            item.DataSurvivalMale.d = DataFrunction.GetSurvival_d(item.DataSurvivalMale.qx, item.DataSurvivalMale.l);
-                            item.DataSurvivalFemale.d = DataFrunction.GetSurvival_d(item.DataSurvivalFemale.qx, item.DataSurvivalFemale.l);
+                            item.DataSurvivalMale.d = DataFunction.GetSurvival_d(item.DataSurvivalMale.qx, item.DataSurvivalMale.l);
+                            item.DataSurvivalFemale.d = DataFunction.GetSurvival_d(item.DataSurvivalFemale.qx, item.DataSurvivalFemale.l);
                         }
                     }
                 }
@@ -498,7 +509,7 @@ namespace Daly
 
                         try
                         {
-                            (double, double) data_L = DataFrunction.GetSurvival_L(DataSetDaly[i], item.DataDiases_Id);
+                            (double, double) data_L = DataFunction.GetSurvival_L(DataSetDaly[i], item.DataDiases_Id);
                             item.DataSurvivalMale.L = data_L.Item1;
                             item.DataSurvivalFemale.L = data_L.Item2;
                         }
@@ -513,7 +524,7 @@ namespace Daly
                             try
                             {
 
-                                (double, double) data_vx = DataFrunction.GetSurvival_vx(DataSetDaly[i].DataRegion_Id, DataSetDaly[i].Year, item.DataDiases_Id);
+                                (double, double) data_vx = DataFunction.GetSurvival_vx(DataSetDaly[i].DataRegion_Id, DataSetDaly[i].Year, item.DataDiases_Id);
                                 _DataSurvivalPeriod_0_year.male_vx = data_vx.Item1;
                                 _DataSurvivalPeriod_0_year.female_vx = data_vx.Item2;
                             }
@@ -526,7 +537,7 @@ namespace Daly
                             try
                             {
 
-                                (double, double) data_d = DataFrunction.GetSurvival_d_two(DataSetDaly[i], item.DataDiases_Id);
+                                (double, double) data_d = DataFunction.GetSurvival_d_two(DataSetDaly[i], item.DataDiases_Id);
                                 item.DataSurvivalMale.d = data_d.Item1;
                                 item.DataSurvivalFemale.d = data_d.Item2;
                             }
@@ -547,49 +558,54 @@ namespace Daly
                     {
                         try
                         {
-                            (double, double) data_T = DataFrunction.GetSurvival_T(DataSetDaly[i], item.DataDiases_Id);
+                            (double, double) data_T = DataFunction.GetSurvival_T(DataSetDaly[i], item.DataDiases_Id);
                             item.DataSurvivalMale.T = data_T.Item1;
                             item.DataSurvivalFemale.T = data_T.Item2;
                         }
                         catch { }
 
-                        item.DataSurvivalMale.e0 = DataFrunction.GetSurvival_e0(item.DataSurvivalMale.T, item.DataSurvivalMale.l);
-                        item.DataSurvivalFemale.e0 = DataFrunction.GetSurvival_e0(item.DataSurvivalFemale.T, item.DataSurvivalFemale.l);
-                        item.DataSurvivalMale.mxl = DataFrunction.GetSurvival_mx1(item.DataSurvivalMale.e0);
-                        item.DataSurvivalFemale.mxl = DataFrunction.GetSurvival_mx1(item.DataSurvivalFemale.e0);
+                        item.DataSurvivalMale.e0 = DataFunction.GetSurvival_e0(item.DataSurvivalMale.T, item.DataSurvivalMale.l);
+                        item.DataSurvivalFemale.e0 = DataFunction.GetSurvival_e0(item.DataSurvivalFemale.T, item.DataSurvivalFemale.l);
+                        item.DataSurvivalMale.mxl = DataFunction.GetSurvival_mx1(item.DataSurvivalMale.e0);
+                        item.DataSurvivalFemale.mxl = DataFunction.GetSurvival_mx1(item.DataSurvivalFemale.e0);
 
                         if (DataSetDaly[i].DataPopulation_Id == 9)
                         {
                             DataSurvivalPeriod_20_year _DataSurvivalPeriod_20_year = DataSurvivalPeriod_20_year.First(u => u.DataSetDalyDiases_Id == item.Id);
                             try
                             {
-                                _DataSurvivalPeriod_20_year.male_ke0_20 = DataFrunction.GetSurvival_ke0_20(DataSetDaly[i].DataRegion_Id, DataSetDaly[i].Year, item.DataDiases_Id, 0, item.DataSurvivalMale.T);
-                                _DataSurvivalPeriod_20_year.male_ke_20 = DataFrunction.GetSurvival_ke_20(_DataSurvivalPeriod_20_year.male_ke0_20 * 100000.0, item.DataSurvivalMale.l);
-                                _DataSurvivalPeriod_20_year.male_F = DataFrunction.GetSurvival_F(_DataSurvivalPeriod_20_year.male_ke0_20, _DataSurvivalPeriod_20_year.male_ke_20);
+                                _DataSurvivalPeriod_20_year.male_ke0_20 = DataFunction.GetSurvival_ke0_20(DataSetDaly[i].DataRegion_Id, DataSetDaly[i].Year, item.DataDiases_Id, 0, item.DataSurvivalMale.T);
+                                _DataSurvivalPeriod_20_year.male_ke_20 = DataFunction.GetSurvival_ke_20(_DataSurvivalPeriod_20_year.male_ke0_20 * 100000.0, item.DataSurvivalMale.l);
+                                _DataSurvivalPeriod_20_year.male_F = DataFunction.GetSurvival_F(_DataSurvivalPeriod_20_year.male_ke0_20, _DataSurvivalPeriod_20_year.male_ke_20);
                             }
                             catch { }
                             try
                             {
-                                _DataSurvivalPeriod_20_year.female_ke0_20 = DataFrunction.GetSurvival_ke0_20(DataSetDaly[i].DataRegion_Id, DataSetDaly[i].Year, item.DataDiases_Id, 1, item.DataSurvivalFemale.T);
-                                _DataSurvivalPeriod_20_year.female_ke_20 = DataFrunction.GetSurvival_ke_20(_DataSurvivalPeriod_20_year.female_ke0_20 * 100000.0, item.DataSurvivalFemale.l);
-                                _DataSurvivalPeriod_20_year.female_F = DataFrunction.GetSurvival_F(_DataSurvivalPeriod_20_year.female_ke0_20, _DataSurvivalPeriod_20_year.female_ke_20);
+                                _DataSurvivalPeriod_20_year.female_ke0_20 = DataFunction.GetSurvival_ke0_20(DataSetDaly[i].DataRegion_Id, DataSetDaly[i].Year, item.DataDiases_Id, 1, item.DataSurvivalFemale.T);
+                                _DataSurvivalPeriod_20_year.female_ke_20 = DataFunction.GetSurvival_ke_20(_DataSurvivalPeriod_20_year.female_ke0_20 * 100000.0, item.DataSurvivalFemale.l);
+                                _DataSurvivalPeriod_20_year.female_F = DataFunction.GetSurvival_F(_DataSurvivalPeriod_20_year.female_ke0_20, _DataSurvivalPeriod_20_year.female_ke_20);
                             }
                             catch { }
                         }
                         if (daly == true)
                         {
-                            (double, double) data_e0_two = DataFrunction.GetSurvival_e0_daly(DataSetDaly[i], item.DataDiases_Id);
+                            (double, double) data_e0_two = DataFunction.GetSurvival_e0_daly(DataSetDaly[i], item.DataDiases_Id);
                             item.DataSurvivalMale.e0_2 = data_e0_two.Item1;
                             item.DataSurvivalFemale.e0_2 = data_e0_two.Item2;
 
                             try
                             {
-                                (double, double) data_YLL = DataFrunction.GetSurvival_YLL(DataSetDaly[i], item.DataDiases_Id);
+                                (double, double) data_YLL = DataFunction.GetSurvival_YLL(DataSetDaly[i], item.DataDiases_Id);
                                 item.DataSurvivalMale.YLL = data_YLL.Item1;
                                 item.DataSurvivalFemale.YLL = data_YLL.Item2;
                             }
                             catch { }
-
+                            try {
+                                item.DataSurvivalMale.VRP = DataFunction.GetSurvival_VRP(item.DataSurvivalMale.YLL, DataSetDaly[i].Year, DataSetDaly[i].DataRegion_Id);
+                                item.DataSurvivalFemale.VRP = DataFunction.GetSurvival_VRP(item.DataSurvivalFemale.YLL, DataSetDaly[i].Year, DataSetDaly[i].DataRegion_Id);
+                            }
+                            catch { }
+                            
                         }
                     }
                 }
@@ -599,7 +615,7 @@ namespace Daly
             ProgressBar.Value = ProgressBar.Maximum;
         }
     }
-    public class DataFrunction
+    public class DataFunction
     {
         //показатель смертности
         public double GetSurvival_mx(int died, int all_died)
@@ -939,6 +955,12 @@ namespace Daly
                 * (-1.0 * rmb * (L_f + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_f)));
             return (male, female);
         }
+        //расчет экономического ущерба
+        public double GetSurvival_VRP(double GetSurvival_YLL_val, int year, int region)
+        {
+            double vrp = DataDaly.DataVRP.First(u => u.DataRegion_Id == region && u.Year == year).VRP;
+            return GetSurvival_YLL_val * vrp;
+        }
     }
     public class DataSubFunction
     {
@@ -967,6 +989,12 @@ namespace Daly
         public int Id { get; set; }
         public string Name { get; set; }
         public string MCB10 { get; set; }
+    }
+    public class DataVRP
+    {
+        public int DataRegion_Id { get; set; }
+        public int Year { get; set; }
+        public double VRP { get; set; }
     }
     public class DataSetDaly
     {
@@ -1007,6 +1035,7 @@ namespace Daly
         public double mxl { get; set; }
         public double e0_2 { get; set; }
         public double YLL { get; set; }
+        public double VRP { get; set; }
     }
     public class DataSurvivalPeriod_0_year
     {
