@@ -19,6 +19,7 @@ namespace Daly
             textBox1.Text = DataDalyConstant.Beta.ToString();
             textBox2.Text = DataDalyConstant.Constant_C.ToString();
             textBox3.Text = DataDalyConstant.Constant_K.ToString();
+            textBox4.Text = DataDalyConstant.Constant_N.ToString();
         }
 
         private void Constant_Load(object sender, EventArgs e)
@@ -35,6 +36,8 @@ namespace Daly
             try { DataDalyConstant.Constant_C = double.Parse(textBox2.Text.Replace(".", ",")); }
             catch { }
             try { DataDalyConstant.Constant_K = double.Parse(textBox3.Text.Replace(".", ",")); }
+            catch { }
+            try { DataDalyConstant.Constant_N = double.Parse(textBox4.Text.Replace(".", ",")); }
             catch { }
             MessageBox.Show("Данные были приняты");
         }

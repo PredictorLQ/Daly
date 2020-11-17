@@ -117,33 +117,44 @@ namespace Daly
         private bool ControlSelectLitbox()
         {
             bool control = true;
-            DataRegion DataRegion = DataDaly.DataRegion.FirstOrDefault(u => u.Name == listBox2.SelectedItem.ToString());
-            if (DataRegion != null)
+            DataDaly.ActivDataRegion_Id = new List<int>();
+            DataDaly.ActivDataYear_Id = new List<int>();
+            DataDaly.ActivDataDiases_Id = new List<int>();
+
+            for (int i=0; i< listBox2.SelectedItems.Count; i++)
             {
-                Console.WriteLine(DataRegion.Id);
-                DataDaly.ActivDataRegion_Id = DataRegion.Id;
+                DataRegion DataRegion = DataDaly.DataRegion.FirstOrDefault(u => u.Name == listBox2.SelectedItems[i].ToString());
+                if (DataRegion != null)
+                {
+                    DataDaly.ActivDataRegion_Id.Add(DataRegion.Id);
+                }
             }
 
-            DataDiases DataDiases = DataDaly.DataDiases.FirstOrDefault(u => u.Name == listBox1.SelectedItem.ToString());
-            if (DataDiases != null)
+            for (int i = 0; i < listBox1.SelectedItems.Count; i++)
             {
-                Console.WriteLine(DataDiases.Id);
-                DataDaly.ActivDataDiases_Id = DataDiases.Id;
+                DataDiases DataDiases = DataDaly.DataDiases.FirstOrDefault(u => u.Name == listBox1.SelectedItems[i].ToString());
+                if (DataDiases != null)
+                {
+                    DataDaly.ActivDataDiases_Id.Add(DataDiases.Id);
+                }
+            }
+            for (int i = 0; i < listBox3.SelectedItems.Count; i++)
+            {
+                DataDaly.ActivDataYear_Id.Add(Convert.ToInt32(listBox3.SelectedItems[i]));
             }
 
-            DataDaly.ActivDataYear_Id = Convert.ToInt32(listBox3.SelectedItem);
 
-            if (DataDaly.ActivDataYear_Id == 0)
+            if (DataDaly.ActivDataYear_Id.Count() == 0)
             {
                 control = false;
                 MessageBox.Show("Не выбран хоть 1 год");
             }
-            if (DataDaly.ActivDataDiases_Id == 0)
+            if (DataDaly.ActivDataDiases_Id.Count() == 0)
             {
                 control = false;
                 MessageBox.Show("Не выбран хоть 1 заболевание");
             }
-            if (DataDaly.ActivDataRegion_Id == 0)
+            if (DataDaly.ActivDataRegion_Id.Count() == 0)
             {
                 control = false;
                 MessageBox.Show("Не выбран хоть 1 регион");
@@ -171,17 +182,7 @@ namespace Daly
             this.Close();
         }
 
-        private void lifieExpectancyTableToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Lifie_Expectancy Lifie_Expectancy = new Lifie_Expectancy();
-            Lifie_Expectancy.Show();
-        }
 
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Options Options = new Options();
-            Options.Show();
-        }
 
         private void constantToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -236,5 +237,34 @@ namespace Daly
 
         }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            bool all = checkBox.Checked;
+            for (int i = 0; i < listBox1.Items.Count; i++)
+            {
+                listBox1.SetSelected(i, all);
+            }
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            bool all = checkBox.Checked;
+            for (int i = 0; i < listBox2.Items.Count; i++)
+            {
+                listBox2.SetSelected(i, all);
+            }
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            bool all = checkBox.Checked;
+            for(int i=0; i< listBox3.Items.Count; i++)
+            {
+                listBox3.SetSelected(i, all);
+            }
+        }
     }
 }

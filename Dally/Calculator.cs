@@ -17,15 +17,21 @@ namespace Daly
             InitializeComponent();
             dataGridView1.Rows.Clear();
             dataGridView2.Rows.Clear();
-            List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => u.Year == DataDaly.ActivDataYear_Id && u.DataRegion_Id == DataDaly.ActivDataRegion_Id).ToList();
+            List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => DataDaly.ActivDataYear_Id.Any(t => t == u.Year) == true
+            && DataDaly.ActivDataRegion_Id.Any(t => t == u.DataRegion_Id) == true).ToList();
             foreach (var item in DataDaly.DataPopulation)
             {
                 if (item.Start_Daly_Bool == true)
                 {
-                    DataSetDaly data = DataSetDaly.First(u => u.DataPopulation_Id == item.Id);
-                    DataSetDalyDiases diases = data.DataSetDalyDiases.First(u => u.DataDiases_Id == DataDaly.ActivDataDiases_Id);
-                    dataGridView1.Rows.Add(item.Name, diases.DataSurvivalMale.e0_2, diases.DataSurvivalMale.YLL);
-                    dataGridView2.Rows.Add(item.Name, diases.DataSurvivalFemale.e0_2, diases.DataSurvivalFemale.YLL);
+                    List<DataSetDalyDiases> diases = new List<DataSetDalyDiases>();
+                    List<DataSetDaly> data = DataSetDaly.Where(u => u.DataPopulation_Id == item.Id).ToList();
+
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        diases.AddRange(data[i].DataSetDalyDiases.Where(u => DataDaly.ActivDataDiases_Id.Any(t => t == u.DataDiases_Id)).ToList());
+                    }
+                    dataGridView1.Rows.Add(item.Name, diases.Average(t=>t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL));
+                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL));
                 }
             }
         }

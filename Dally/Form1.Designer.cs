@@ -35,8 +35,6 @@
             this.resetDALYCalculatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lifieExpectancyTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.constantToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.таблицыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.населениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,31 +117,15 @@
             // settingToolStripMenuItem
             // 
             this.settingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lifieExpectancyTableToolStripMenuItem,
-            this.optionsToolStripMenuItem,
             this.constantToolStripMenuItem});
             this.settingToolStripMenuItem.Name = "settingToolStripMenuItem";
             this.settingToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
             this.settingToolStripMenuItem.Text = "Настройки";
             // 
-            // lifieExpectancyTableToolStripMenuItem
-            // 
-            this.lifieExpectancyTableToolStripMenuItem.Name = "lifieExpectancyTableToolStripMenuItem";
-            this.lifieExpectancyTableToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
-            this.lifieExpectancyTableToolStripMenuItem.Text = "Lifie Expectancy table...";
-            this.lifieExpectancyTableToolStripMenuItem.Click += new System.EventHandler(this.lifieExpectancyTableToolStripMenuItem_Click);
-            // 
-            // optionsToolStripMenuItem
-            // 
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
-            this.optionsToolStripMenuItem.Text = "Опции";
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
-            // 
             // constantToolStripMenuItem
             // 
             this.constantToolStripMenuItem.Name = "constantToolStripMenuItem";
-            this.constantToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.constantToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.constantToolStripMenuItem.Text = "Константы";
             this.constantToolStripMenuItem.Click += new System.EventHandler(this.constantToolStripMenuItem_Click);
             // 
@@ -159,14 +141,14 @@
             // населениеToolStripMenuItem
             // 
             this.населениеToolStripMenuItem.Name = "населениеToolStripMenuItem";
-            this.населениеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.населениеToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.населениеToolStripMenuItem.Text = "Население";
             this.населениеToolStripMenuItem.Click += new System.EventHandler(this.населениеToolStripMenuItem_Click);
             // 
             // дожитиеToolStripMenuItem
             // 
             this.дожитиеToolStripMenuItem.Name = "дожитиеToolStripMenuItem";
-            this.дожитиеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.дожитиеToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.дожитиеToolStripMenuItem.Text = "Дожитие";
             this.дожитиеToolStripMenuItem.Click += new System.EventHandler(this.дожитиеToolStripMenuItem_Click);
             // 
@@ -204,26 +186,24 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Checked = true;
-            this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox3.Location = new System.Drawing.Point(23, 67);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(71, 17);
             this.checkBox3.TabIndex = 34;
             this.checkBox3.Text = "Все года";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Checked = true;
-            this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox2.Location = new System.Drawing.Point(23, 43);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(91, 17);
             this.checkBox2.TabIndex = 33;
             this.checkBox2.Text = "Все регионы";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // checkBox1
             // 
@@ -234,6 +214,7 @@
             this.checkBox1.TabIndex = 32;
             this.checkBox1.Text = "Все заболевания";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -262,6 +243,7 @@
             this.listBox3.FormattingEnabled = true;
             this.listBox3.Location = new System.Drawing.Point(598, 43);
             this.listBox3.Name = "listBox3";
+            this.listBox3.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
             this.listBox3.Size = new System.Drawing.Size(135, 277);
             this.listBox3.TabIndex = 37;
             this.listBox3.SelectedIndexChanged += new System.EventHandler(this.listBox3_SelectedIndexChanged);
@@ -280,6 +262,7 @@
             this.listBox2.FormattingEnabled = true;
             this.listBox2.Location = new System.Drawing.Point(322, 43);
             this.listBox2.Name = "listBox2";
+            this.listBox2.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
             this.listBox2.Size = new System.Drawing.Size(235, 277);
             this.listBox2.TabIndex = 1;
             // 
@@ -288,6 +271,7 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(23, 43);
             this.listBox1.Name = "listBox1";
+            this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
             this.listBox1.Size = new System.Drawing.Size(269, 277);
             this.listBox1.TabIndex = 0;
             // 
@@ -383,8 +367,6 @@
         private System.Windows.Forms.ToolStripMenuItem resetDALYCalculatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem lifieExpectancyTableToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;

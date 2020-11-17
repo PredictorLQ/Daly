@@ -21,45 +21,51 @@ namespace Daly
             dataGridView4.Rows.Clear();
             dataGridView5.Rows.Clear();
             dataGridView6.Rows.Clear();
-            List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => u.Year == DataDaly.ActivDataYear_Id && u.DataRegion_Id == DataDaly.ActivDataRegion_Id).ToList();
+            List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => DataDaly.ActivDataYear_Id.Any(t => t == u.Year) == true
+            && DataDaly.ActivDataRegion_Id.Any(t => t == u.DataRegion_Id) == true).ToList();
             (double, double) vx = (0, 0), ke0_20 = (0, 0), ke_20 = (0, 0), F = (0, 0);
             foreach (var item in DataDaly.DataPopulation)
             {
-                DataSetDaly data = DataSetDaly.First(u => u.DataPopulation_Id == item.Id);
-                DataSetDalyDiases diases = data.DataSetDalyDiases.First(u => u.DataDiases_Id == DataDaly.ActivDataDiases_Id);
-                dataGridView1.Rows.Add(item.Name, diases.DataSurvivalMale.mx,
-                    diases.DataSurvivalMale.qx, diases.DataSurvivalMale.px, diases.DataSurvivalMale.l,
-                    diases.DataSurvivalMale.d, diases.DataSurvivalMale.L, diases.DataSurvivalMale.T, diases.DataSurvivalMale.e0,
-                    diases.DataSurvivalMale.mxl);
-
-                dataGridView2.Rows.Add(diases.Id, item.Name, diases.DataSurvivalFemale.mx,
-                    diases.DataSurvivalFemale.qx, diases.DataSurvivalFemale.px, diases.DataSurvivalFemale.l,
-                    diases.DataSurvivalFemale.d, diases.DataSurvivalFemale.L, diases.DataSurvivalFemale.T, diases.DataSurvivalFemale.e0,
-                     diases.DataSurvivalFemale.mxl);
-
-                if (item.Id == 1)
+                List<DataSetDalyDiases> diases = new List<DataSetDalyDiases>();
+                List<DataSetDaly> data = DataSetDaly.Where(u => u.DataPopulation_Id == item.Id).ToList();
+                for (int i=0;i< data.Count; i++)
                 {
-                    DataSurvivalPeriod_0_year DataSurvivalPeriod_0_year = DataDaly.DataSurvivalPeriod_0_year.First(u => u.DataSetDalyDiases_Id == diases.Id);
-                    vx.Item1 = DataSurvivalPeriod_0_year.male_vx;
-                    vx.Item2 = DataSurvivalPeriod_0_year.female_vx;
-                }
-                if (item.Id == 9)
-                {
-                    DataSurvivalPeriod_20_year DataSurvivalPeriod_20_year = DataDaly.DataSurvivalPeriod_20_year.First(u => u.DataSetDalyDiases_Id == diases.Id);
-                    ke0_20.Item1 = DataSurvivalPeriod_20_year.male_ke0_20;
-                    ke0_20.Item2 = DataSurvivalPeriod_20_year.female_ke0_20;
-                    ke_20.Item1 = DataSurvivalPeriod_20_year.male_ke_20;
-                    ke_20.Item2 = DataSurvivalPeriod_20_year.female_ke_20;
-                    F.Item1 = DataSurvivalPeriod_20_year.male_F;
-                    F.Item2 = DataSurvivalPeriod_20_year.female_F;
-                }
-                if(item.Id == 19)
-                {
-                    DataSurvivalPeriod_70_year data_70 = DataDaly.DataSurvivalPeriod_70_year.First(u => u.DataSetDalyDiases_Id == diases.Id);
+                    List<DataSetDalyDiases> DataSetDalyDiases = data[i].DataSetDalyDiases.Where(u => DataDaly.ActivDataDiases_Id.Any(t => t == u.DataDiases_Id)).ToList();
+                    diases.AddRange(DataSetDalyDiases);
 
-                    dataGridView5.Rows.Add(data_70.male.c, data_70.male.b, data_70.male.a);
-                    dataGridView6.Rows.Add(data_70.female.c, data_70.female.b, data_70.female.a);
+                    if (item.Id == 1)
+                    {
+                        List<DataSurvivalPeriod_0_year> DataSurvivalPeriod_0_year = DataDaly.DataSurvivalPeriod_0_year.Where(u => DataSetDalyDiases.Any(t => t.Id == u.DataSetDalyDiases_Id) == true).ToList();
+                        vx.Item1 = DataSurvivalPeriod_0_year.Average(t=>t.male_vx);
+                        vx.Item2 = DataSurvivalPeriod_0_year.Average(t => t.female_vx);
+                    }
+                    if (item.Id == 9)
+                    {
+                        List<DataSurvivalPeriod_20_year> DataSurvivalPeriod_20_year = DataDaly.DataSurvivalPeriod_20_year.Where(u => DataSetDalyDiases.Any(t => t.Id == u.DataSetDalyDiases_Id) == true).ToList();
+                        ke0_20.Item1 = DataSurvivalPeriod_20_year.Average(t => t.male_ke0_20);
+                        ke0_20.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_ke0_20);
+                        ke_20.Item1 = DataSurvivalPeriod_20_year.Average(t => t.male_ke_20);
+                        ke_20.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_ke_20);
+                        F.Item1 = DataSurvivalPeriod_20_year.Average(t => t.male_F);
+                        F.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_F);
+                    }
+                    if (item.Id == 19)
+                    {
+                        List<DataSurvivalPeriod_70_year> data_70 = DataDaly.DataSurvivalPeriod_70_year.Where(u => DataSetDalyDiases.Any(t => t.Id == u.DataSetDalyDiases_Id) == true).ToList();
+
+                        dataGridView5.Rows.Add(data_70.Average(t => t.male.c), data_70.Average(t => t.male.b), data_70.Average(t => t.male.a));
+                        dataGridView6.Rows.Add(data_70.Average(t => t.female.c), data_70.Average(t => t.female.b), data_70.Average(t => t.female.a));
+                    }
                 }
+                 dataGridView1.Rows.Add(item.Name, diases.Average(t=>t.DataSurvivalMale.mx),
+                    diases.Average(t => t.DataSurvivalMale.qx), diases.Average(t => t.DataSurvivalMale.px), diases.Average(t => t.DataSurvivalMale.l),
+                    diases.Average(t => t.DataSurvivalMale.d), diases.Average(t => t.DataSurvivalMale.L), diases.Average(t => t.DataSurvivalMale.T), diases.Average(t => t.DataSurvivalMale.e0),
+                    diases.Average(t => t.DataSurvivalMale.mxl));
+
+                dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.mx),
+                     diases.Average(t => t.DataSurvivalFemale.qx), diases.Average(t => t.DataSurvivalFemale.px), diases.Average(t => t.DataSurvivalFemale.l),
+                    diases.Average(t => t.DataSurvivalFemale.d), diases.Average(t => t.DataSurvivalFemale.L), diases.Average(t => t.DataSurvivalFemale.T), diases.Average(t => t.DataSurvivalFemale.e0),
+                    diases.Average(t => t.DataSurvivalFemale.mxl));
             }
             dataGridView3.Rows.Add(vx.Item1, ke0_20.Item1, ke_20.Item1, F.Item1);
             dataGridView4.Rows.Add(vx.Item2, ke0_20.Item2, ke_20.Item2, F.Item2);

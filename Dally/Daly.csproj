@@ -86,18 +86,6 @@
     <Compile Include="Form2.Designer.cs">
       <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Lifie_Expectancy.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Lifie_Expectancy.Designer.cs">
-      <DependentUpon>Lifie_Expectancy.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Options.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Options.Designer.cs">
-      <DependentUpon>Options.cs</DependentUpon>
-    </Compile>
     <Compile Include="Population.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,12 +105,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Lifie_Expectancy.resx">
-      <DependentUpon>Lifie_Expectancy.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Options.resx">
-      <DependentUpon>Options.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Population.resx">
       <DependentUpon>Population.cs</DependentUpon>

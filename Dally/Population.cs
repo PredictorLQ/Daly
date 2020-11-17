@@ -18,14 +18,15 @@ namespace Daly
             InitializeComponent();
             dataGridView1.Rows.Clear();
             dataGridView2.Rows.Clear();
-            List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => u.Year == DataDaly.ActivDataYear_Id && u.DataRegion_Id == DataDaly.ActivDataRegion_Id).ToList();
+            List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => DataDaly.ActivDataYear_Id.Any(t => t == u.Year) == true
+            && DataDaly.ActivDataRegion_Id.Any(t => t == u.DataRegion_Id) == true).ToList();
             foreach (var item in DataDaly.DataPopulation)
             {
                 if(item.Excel == true)
                 {
-                    DataSetDaly data = DataSetDaly.First(u => u.DataPopulation_Id == item.Id);
-                    dataGridView1.Rows.Add(item.Name, data.MaleLife, data.MaleDied, data.MaleBirth, item.PeriodDied);
-                    dataGridView2.Rows.Add(item.Name, data.FemaleLife, data.FemaleDied, data.FemaleBirth, item.PeriodDied);
+                    List<DataSetDaly> data = DataSetDaly.Where(u => u.DataPopulation_Id == item.Id).ToList();
+                    dataGridView1.Rows.Add(item.Name, data.Sum(u=>u.MaleLife), data.Sum(u => u.MaleDied), data.Sum(u => u.MaleBirth), item.PeriodDied);
+                    dataGridView2.Rows.Add(item.Name, data.Sum(u => u.FemaleLife), data.Sum(u => u.FemaleDied), data.Sum(u => u.FemaleBirth), item.PeriodDied);
                 }
             }
         }

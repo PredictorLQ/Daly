@@ -15,7 +15,8 @@ namespace Daly
         public static double Discount_rate = 0.03;
         public static double Beta = 0.04;
         public static double Constant_C = 0.1658;
-        public static double Constant_K = 1;
+        public static double Constant_K = 1.0;
+        public static double Constant_N = 1.0;
     }
     public class DataDaly
     {
@@ -27,9 +28,9 @@ namespace Daly
         public static List<DataSurvivalPeriod_0_year> DataSurvivalPeriod_0_year;
         public static List<DataSurvivalPeriod_20_year> DataSurvivalPeriod_20_year;
         public static List<DataSurvivalPeriod_70_year> DataSurvivalPeriod_70_year;
-        public static int ActivDataYear_Id { get; set; }
-        public static int ActivDataRegion_Id { get; set; }
-        public static int ActivDataDiases_Id { get; set; }
+        public static List<int> ActivDataYear_Id { get; set; }
+        public static List<int> ActivDataRegion_Id { get; set; }
+        public static List<int> ActivDataDiases_Id { get; set; }
         static void GetDataSetDalyItem(Excel.Worksheet ObjWorkSheet)
         {
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
@@ -197,7 +198,7 @@ namespace Daly
                                 Name = excelRange.Cells[i, colum_population + 4].Value2.ToString(),
                                 Excel = Convert.ToInt32(excelRange.Cells[i, colum_population + 1].Value2) == 1,
                                 Start_Daly = Convert.ToInt32(excelRange.Cells[i, colum_population + 2].Value2),
-                                Start_Daly_Bool = Convert.ToInt32(excelRange.Cells[i, colum_population + 2].Value2) !=-1,
+                                Start_Daly_Bool = Convert.ToInt32(excelRange.Cells[i, colum_population + 2].Value2) != -1,
                                 PeriodDied = Convert.ToDouble(excelRange.Cells[i, colum_population + 3].Value2)
                             });
                         }
@@ -477,7 +478,7 @@ namespace Daly
                             item.DataSurvivalFemale.l = data_l.Item2;
                         }
                         catch { }
-                        if(items.DataPopulation_Id <= 20)
+                        if (items.DataPopulation_Id <= 20)
                         {
                             item.DataSurvivalMale.d = DataFrunction.GetSurvival_d(item.DataSurvivalMale.qx, item.DataSurvivalMale.l);
                             item.DataSurvivalFemale.d = DataFrunction.GetSurvival_d(item.DataSurvivalFemale.qx, item.DataSurvivalFemale.l);
@@ -519,8 +520,8 @@ namespace Daly
                             catch { }
                             DataSurvivalPeriod_0_year.Add(_DataSurvivalPeriod_0_year);
                         }
-                        
-                        if(DataSetDaly[i].DataPopulation_Id > 20)
+
+                        if (DataSetDaly[i].DataPopulation_Id > 20)
                         {
                             try
                             {
@@ -575,19 +576,20 @@ namespace Daly
                             }
                             catch { }
                         }
-                        if(daly == true)
+                        if (daly == true)
                         {
                             (double, double) data_e0_two = DataFrunction.GetSurvival_e0_daly(DataSetDaly[i], item.DataDiases_Id);
                             item.DataSurvivalMale.e0_2 = data_e0_two.Item1;
                             item.DataSurvivalFemale.e0_2 = data_e0_two.Item2;
 
-                            try {
+                            try
+                            {
                                 (double, double) data_YLL = DataFrunction.GetSurvival_YLL(DataSetDaly[i], item.DataDiases_Id);
                                 item.DataSurvivalMale.YLL = data_YLL.Item1;
                                 item.DataSurvivalFemale.YLL = data_YLL.Item2;
                             }
                             catch { }
-                            
+
                         }
                     }
                 }
@@ -668,7 +670,7 @@ namespace Daly
 
 
                             return (data_p0_male * data_p1_male * ((double)data_all_died_male / (0.5 * (double)data_1_birth_male + (double)data_2_birth_male + 0.5 * (double)data_3_birth_male)),
-                               (data_p0_female * data_p1_female * (double)data_all_died_female / (0.5 * (double)data_1_birth_female +  (double)data_2_birth_female + 0.5 * (double)data_3_birth_female)));
+                               (data_p0_female * data_p1_female * (double)data_all_died_female / (0.5 * (double)data_1_birth_female + (double)data_2_birth_female + 0.5 * (double)data_3_birth_female)));
                         }
                         else
                         {
@@ -891,28 +893,28 @@ namespace Daly
         //Ожидаемая продолжительность жизни
         public (double, double) GetSurvival_e0_daly(DataSetDaly DataSetDaly, int diases)
         {
-            int period = DataSetDaly.DataPopulation_Id, period_next = period+1;
+            int period = DataSetDaly.DataPopulation_Id, period_next = period + 1;
             if (period == 1)
                 period_next = 6;
-            if(period ==20)
+            if (period == 20)
                 period_next = 22;
             DataSetDaly data = DataDaly.DataSetDaly.Where(u => u.DataPopulation_Id == period_next && u.DataRegion_Id == DataSetDaly.DataRegion_Id && u.Year == DataSetDaly.Year).FirstOrDefault();
             if (data == null)
                 return (0, 0);
             DataPopulation popul_period = DataDaly.DataPopulation.First(u => u.Id == DataSetDaly.DataPopulation_Id),
                 popul_period_next = DataDaly.DataPopulation.First(u => u.Id == period_next);
-            
+
             double male_period = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalMale.e0,
                 female_period = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalFemale.e0,
                 male_period_next = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalMale.e0,
                 female_period_next = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalFemale.e0;
-            double period_daly = popul_period.PeriodDied - popul_period.Start_Daly, 
+            double period_daly = popul_period.PeriodDied - popul_period.Start_Daly,
                 start_daly = popul_period_next.Start_Daly - popul_period.Start_Daly;
             if (period_next == 22)
                 start_daly = 5;
             double data_e0_male = male_period + period_daly * (male_period_next - male_period) / start_daly,
                 data_e0_female = female_period + period_daly * (female_period_next - female_period) / start_daly;
-            if(period_next ==22)
+            if (period_next == 22)
                 return (data_e0_male, data_e0_female);
 
             return (data_e0_male, data_e0_female);
@@ -922,17 +924,18 @@ namespace Daly
             DataSetDalyDiases d_diases = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases);
             DataPopulation popul = DataDaly.DataPopulation.First(u => u.Id == DataSetDaly.DataPopulation_Id);
             double K = DataDalyConstant.Constant_K, C = DataDalyConstant.Constant_C, r = DataDalyConstant.Discount_rate,
-                beta = DataDalyConstant.Beta, e = Math.E, rpb = r + beta, rmb = r - beta, a = popul.PeriodDied, 
+                beta = DataDalyConstant.Beta, e = Math.E, rpb = r + beta, rmb = r - beta, a = popul.PeriodDied,
+                N = DataDalyConstant.Constant_N,
                 L_m = d_diases.DataSurvivalMale.e0_2,
                 L_f = d_diases.DataSurvivalFemale.e0_2,
                 coef_1 = K * C * Math.Pow(e, r * a) / Math.Pow(rpb, 2),
                 coef_2 = Math.Pow(e, -1.0 * rpb * a) * (-1.0 * rpb * a - 1.0),
                 coef_3 = (1.0 - K) / r;
 
-            double male = d_diases.MaleDied * (coef_1 * (Math.Pow(e, -1.0*rpb *(L_m + a))
-                *(-1.0*rmb * (L_m + a)-1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0*r*L_m))),
+            double male = d_diases.MaleDied * N * (coef_1 * (Math.Pow(e, -1.0 * rpb * (L_m + a))
+                * (-1.0 * rmb * (L_m + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_m))),
 
-                female = d_diases.FemaleDied * (coef_1 * (Math.Pow(e, -1.0 * rpb * (L_f + a))
+                female = d_diases.FemaleDied * N * (coef_1 * (Math.Pow(e, -1.0 * rpb * (L_f + a))
                 * (-1.0 * rmb * (L_f + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_f)));
             return (male, female);
         }
