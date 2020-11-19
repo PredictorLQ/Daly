@@ -45,6 +45,32 @@ namespace Daly
             }
             dataGridView1.Rows.Add("Итого", "", "", vrp_all.Item1);
             dataGridView2.Rows.Add("Итого", "", "", vrp_all.Item2);
+            List<int> max_count = new List<int>{
+            DataDaly.ActivDataYear_Id.Count(),
+            DataDaly.ActivDataRegion_Id.Count(),
+            DataDaly.ActivDataDiases_Id.Count()
+            };
+            int max = max_count.Max();
+            for (int i = 0; i < max; i++)
+            {
+                (string, string, string) elem = ("", "", "");
+                try
+                {
+                    elem.Item1 = DataDaly.DataDiases.First(u => u.Id == DataDaly.ActivDataDiases_Id[i]).Name;
+                }
+                catch { }
+                try
+                {
+                    elem.Item2 = DataDaly.DataRegion.First(u => u.Id == DataDaly.ActivDataRegion_Id[i]).Name;
+                }
+                catch { }
+                try
+                {
+                    elem.Item3 = DataDaly.ActivDataYear_Id[i].ToString();
+                }
+                catch { }
+                dataGridView7.Rows.Add(elem.Item1, elem.Item2, elem.Item3);
+            }
         }
 
         private void Calculator_Load(object sender, EventArgs e)

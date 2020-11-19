@@ -30,7 +30,6 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadDALYDataFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDALYDataToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDALYCalculatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +57,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.progressBar3 = new System.Windows.Forms.ProgressBar();
             this.label6 = new System.Windows.Forms.Label();
+            this.progressBar4 = new System.Windows.Forms.ProgressBar();
+            this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -78,7 +79,6 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadDALYDataFromFileToolStripMenuItem,
             this.saveDALYDataToFileToolStripMenuItem,
             this.resetDALYCalculatorToolStripMenuItem,
             this.exitToolStripMenuItem});
@@ -86,31 +86,24 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.fileToolStripMenuItem.Text = "Файл";
             // 
-            // loadDALYDataFromFileToolStripMenuItem
-            // 
-            this.loadDALYDataFromFileToolStripMenuItem.Name = "loadDALYDataFromFileToolStripMenuItem";
-            this.loadDALYDataFromFileToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.loadDALYDataFromFileToolStripMenuItem.Text = "Загрузить";
-            this.loadDALYDataFromFileToolStripMenuItem.Click += new System.EventHandler(this.loadDALYDataFromFileToolStripMenuItem_Click);
-            // 
             // saveDALYDataToFileToolStripMenuItem
             // 
             this.saveDALYDataToFileToolStripMenuItem.Name = "saveDALYDataToFileToolStripMenuItem";
-            this.saveDALYDataToFileToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.saveDALYDataToFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveDALYDataToFileToolStripMenuItem.Text = "Сохранить";
             this.saveDALYDataToFileToolStripMenuItem.Click += new System.EventHandler(this.saveDALYDataToFileToolStripMenuItem_Click);
             // 
             // resetDALYCalculatorToolStripMenuItem
             // 
             this.resetDALYCalculatorToolStripMenuItem.Name = "resetDALYCalculatorToolStripMenuItem";
-            this.resetDALYCalculatorToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.resetDALYCalculatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.resetDALYCalculatorToolStripMenuItem.Text = "Перезапустить";
             this.resetDALYCalculatorToolStripMenuItem.Click += new System.EventHandler(this.resetDALYCalculatorToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -125,7 +118,7 @@
             // constantToolStripMenuItem
             // 
             this.constantToolStripMenuItem.Name = "constantToolStripMenuItem";
-            this.constantToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.constantToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.constantToolStripMenuItem.Text = "Константы";
             this.constantToolStripMenuItem.Click += new System.EventHandler(this.constantToolStripMenuItem_Click);
             // 
@@ -325,10 +318,31 @@
             this.label6.TabIndex = 39;
             this.label6.Text = "Преобразование данных";
             // 
+            // progressBar4
+            // 
+            this.progressBar4.Location = new System.Drawing.Point(637, 47);
+            this.progressBar4.Name = "progressBar4";
+            this.progressBar4.Size = new System.Drawing.Size(140, 17);
+            this.progressBar4.Step = 5;
+            this.progressBar4.TabIndex = 42;
+            this.progressBar4.Visible = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(505, 47);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(117, 13);
+            this.label7.TabIndex = 41;
+            this.label7.Text = "Получение популяции";
+            this.label7.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(825, 535);
+            this.Controls.Add(this.progressBar4);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.progressBar3);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.progressBar2);
@@ -362,7 +376,6 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadDALYDataFromFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveDALYDataToFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetDALYCalculatorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -390,6 +403,8 @@
         public System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.ProgressBar progressBar3;
         private System.Windows.Forms.Label label6;
+        public System.Windows.Forms.ProgressBar progressBar4;
+        private System.Windows.Forms.Label label7;
     }
 }
 

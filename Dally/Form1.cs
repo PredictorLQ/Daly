@@ -10,25 +10,19 @@ using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.IO;
 
 namespace Daly
 {
     public partial class Form1 : Form
     {
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FreeConsole();
-
         private Excel.Application excel;
         private DataDaly DataDaly;
         private readonly string path_excel = "\\excel.xlsx";
         private readonly string path_data = "\\data.xlsx";
-        public static ProgressBar _progressBar1;
+        private readonly string path_result = "\\Результаты";
+        private readonly string[] elem = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "YLL", "Потери (руб.)" };
         public static bool Error_Excel = false;
         public Form1()
         {
@@ -121,7 +115,7 @@ namespace Daly
             DataDaly.ActivDataYear_Id = new List<int>();
             DataDaly.ActivDataDiases_Id = new List<int>();
 
-            for (int i=0; i< listBox2.SelectedItems.Count; i++)
+            for (int i = 0; i < listBox2.SelectedItems.Count; i++)
             {
                 DataRegion DataRegion = DataDaly.DataRegion.FirstOrDefault(u => u.Name == listBox2.SelectedItems[i].ToString());
                 if (DataRegion != null)
@@ -162,14 +156,134 @@ namespace Daly
 
             return control;
         }
-        private void loadDALYDataFromFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void saveDALYDataToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (ControlSelectLitbox() == true)
+            {
+                string path = @Application.StartupPath.ToString() + path_result;
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+                if (!dirInfo.Exists)
+                {
+                    dirInfo.Create();
+                }
+                excel = new Excel.Application();
+                excel.Visible = true;
+                Excel.Workbook workBook = excel.Workbooks.Add(Type.Missing);
+                label7.Visible = true;
+                progressBar4.Visible = true;
+                progressBar4.Minimum = 0;
+                progressBar4.Value = 0;
+                progressBar4.Maximum = DataDaly.ActivDataRegion_Id.Count * DataDaly.ActivDataDiases_Id.Count * DataDaly.ActivDataYear_Id.Count * DataDaly.DataPopulation.Count;
+                int count_popul = DataDaly.DataPopulation.Count(),
+                    count_year = DataDaly.ActivDataYear_Id.Count();
+                for (int i = 0; i < DataDaly.ActivDataRegion_Id.Count; i++)
+                {
+                    DataRegion DataRegion = DataDaly.DataRegion.FirstOrDefault(u => u.Id == DataDaly.ActivDataRegion_Id[i]);
+                    if (DataRegion != null)
+                    {
+                        var xlNewSheet = (Excel.Worksheet)workBook.Sheets.Add(workBook.Sheets[1], Type.Missing, Type.Missing, Type.Missing);
+                        xlNewSheet.Name = $"{DataRegion.Id}-{DataRegion.Name}";
+                        xlNewSheet.Cells.NumberFormat = "@";
+                        int start_row = 1;
+                        for (int j = 0; j < DataDaly.ActivDataDiases_Id.Count; j++)
+                        {
+                            DataDiases DataDiases = DataDaly.DataDiases.FirstOrDefault(u => u.Id == DataDaly.ActivDataDiases_Id[i]);
+                            if (DataDiases != null)
+                            {
+                                for (int l = 0; l < count_year; l++)
+                                {
+                                    xlNewSheet.Cells[start_row, 1] = DataDiases.Name;
+                                    xlNewSheet.Cells[start_row, 2] = DataDaly.ActivDataYear_Id[l];
+                                    start_row++;
+                                    xlNewSheet.Cells[start_row, 1] = "Мужчины";
+                                    xlNewSheet.Cells[start_row, 14] = "Женщины";
+                                    start_row++;
+                                    for (int z = 0; z < elem.Length; z++)
+                                    {
+                                        xlNewSheet.Cells[start_row, 2 + z] = elem[z];
+                                        xlNewSheet.Cells[start_row, 15 + z] = elem[z];
+                                    }
 
+                                    (double, double) vrp_all = (0, 0);
+                                    for (int k = 0; k < count_popul; k++)
+                                    {
+                                        try
+                                        {
+                                            start_row++;
+                                            DataSetDaly DataSetDaly = DataDaly.DataSetDaly.FirstOrDefault(u => u.DataPopulation_Id == DataDaly.DataPopulation[k].Id
+                                            && u.Year == DataDaly.ActivDataYear_Id[l]
+                                            && u.DataRegion_Id == DataDaly.ActivDataRegion_Id[i]);
+                                            var diases = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == DataDaly.ActivDataDiases_Id[j]);
+
+                                            xlNewSheet.Cells[start_row, 1] = DataDaly.DataPopulation[k].Name;
+                                            xlNewSheet.Cells[start_row, 2] = diases.DataSurvivalMale.mx;
+                                            xlNewSheet.Cells[start_row, 3] = diases.DataSurvivalMale.qx;
+                                            xlNewSheet.Cells[start_row, 4] = diases.DataSurvivalMale.px;
+                                            xlNewSheet.Cells[start_row, 5] = diases.DataSurvivalMale.l;
+                                            xlNewSheet.Cells[start_row, 6] = diases.DataSurvivalMale.d;
+                                            xlNewSheet.Cells[start_row, 7] = diases.DataSurvivalMale.L;
+                                            xlNewSheet.Cells[start_row, 8] = diases.DataSurvivalMale.T;
+                                            xlNewSheet.Cells[start_row, 9] = diases.DataSurvivalMale.e0;
+                                            xlNewSheet.Cells[start_row, 10] = diases.DataSurvivalMale.mxl;
+
+                                            xlNewSheet.Cells[start_row, 14] = DataDaly.DataPopulation[k].Name;
+                                            xlNewSheet.Cells[start_row, 15] = diases.DataSurvivalFemale.mx;
+                                            xlNewSheet.Cells[start_row, 16] = diases.DataSurvivalFemale.qx;
+                                            xlNewSheet.Cells[start_row, 17] = diases.DataSurvivalFemale.px;
+                                            xlNewSheet.Cells[start_row, 18] = diases.DataSurvivalFemale.l;
+                                            xlNewSheet.Cells[start_row, 19] = diases.DataSurvivalFemale.d;
+                                            xlNewSheet.Cells[start_row, 20] = diases.DataSurvivalFemale.L;
+                                            xlNewSheet.Cells[start_row, 21] = diases.DataSurvivalFemale.T;
+                                            xlNewSheet.Cells[start_row, 22] = diases.DataSurvivalFemale.e0;
+                                            xlNewSheet.Cells[start_row, 23] = diases.DataSurvivalFemale.mxl;
+
+                                            if (DataDaly.DataPopulation[k].Start_Daly_Bool == true)
+                                            {
+                                                (double, double) vrp = (diases.DataSurvivalMale.VRP, diases.DataSurvivalFemale.VRP);
+                                                if (DataDaly.DataPopulation[k].Id == 19)
+                                                {
+                                                    vrp.Item1 /= 2.0;
+                                                    vrp.Item2 /= 2.0;
+                                                }
+                                                vrp_all.Item1 += vrp.Item1;
+                                                vrp_all.Item2 += vrp.Item2;
+
+                                                xlNewSheet.Cells[start_row, 11] = diases.DataSurvivalMale.YLL;
+                                                xlNewSheet.Cells[start_row, 12] = vrp.Item1;
+
+                                                xlNewSheet.Cells[start_row, 24] = diases.DataSurvivalFemale.YLL;
+                                                xlNewSheet.Cells[start_row, 25] = vrp.Item2;
+                                            }
+                                        }
+                                        catch { }
+                                    }
+                                    start_row++;
+                                    xlNewSheet.Cells[start_row, 1] = "Итого";
+                                    xlNewSheet.Cells[start_row, 23] = "Итого";
+
+                                    xlNewSheet.Cells[start_row, 12] = vrp_all.Item1;
+                                    xlNewSheet.Cells[start_row, 25] = vrp_all.Item2;
+
+                                    start_row += 2;
+                                    progressBar4.Value++;
+                                }
+                                start_row += 1;
+                            }
+                            progressBar4.Value++;
+                        }
+                    }
+                    progressBar4.Value++;
+                }
+                string path_ex = path + "\\" + DateTime.Now.ToString().Replace(":", "-") + ".xlsx";
+                excel.Application.ActiveWorkbook.SaveAs(path_ex, Type.Missing,
+      Type.Missing, Type.Missing, Type.Missing, Type.Missing, Excel.XlSaveAsAccessMode.xlNoChange,
+      Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                excel.Quit();
+                progressBar4.Value = progressBar1.Maximum;
+                label7.Visible = false;
+                progressBar4.Visible = false;
+            }
         }
 
         private void resetDALYCalculatorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -181,9 +295,6 @@ namespace Daly
         {
             this.Close();
         }
-
-
-
         private void constantToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Constant Constant = new Constant();
@@ -261,7 +372,7 @@ namespace Daly
         {
             CheckBox checkBox = (CheckBox)sender;
             bool all = checkBox.Checked;
-            for(int i=0; i< listBox3.Items.Count; i++)
+            for (int i = 0; i < listBox3.Items.Count; i++)
             {
                 listBox3.SetSelected(i, all);
             }
