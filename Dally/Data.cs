@@ -810,7 +810,7 @@ namespace Daly
             if (period == 1)
                 return (0.35 * data_male + 0.65 * data_male_two, 0.35 * data_female + 0.65 * data_female_two);
             if (period < 6)
-                return (1.9 * data_male + 2.1 * data_male_two, 1.9 * data_female + 2.1 * data_female_two);
+                return (0.5 * (data_male + data_male_two), 0.5 * (data_female + data_female_two));
             return (2.5 * (data_male + data_male_two), 2.5 * (data_female + data_female_two));
         }
         //общее число человеко-лет, которое предстоит прожить от текущего возраста до предельного (на 100000 родившихся)
