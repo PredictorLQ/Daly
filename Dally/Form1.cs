@@ -241,30 +241,29 @@ namespace Daly
                                             xlNewSheet.Cells[start_row, 23] = diases.DataSurvivalFemale.mxl;
 
                                             xlNewSheet.Cells[start_row, 27] = DataDaly.DataPopulation[k].Name;
-                                            xlNewSheet.Cells[start_row, 28] = (diases.DataSurvivalMale.mx + diases.DataSurvivalFemale.mx) / 2.0;
-                                            xlNewSheet.Cells[start_row, 29] = (diases.DataSurvivalMale.qx + diases.DataSurvivalFemale.qx) / 2.0;
-                                            xlNewSheet.Cells[start_row, 30] = (diases.DataSurvivalMale.px + diases.DataSurvivalFemale.px) / 2.0;
-                                            xlNewSheet.Cells[start_row, 31] = (diases.DataSurvivalMale.l + diases.DataSurvivalFemale.l) / 2.0;
-                                            xlNewSheet.Cells[start_row, 32] = (diases.DataSurvivalMale.d + diases.DataSurvivalFemale.d) / 2.0;
-                                            xlNewSheet.Cells[start_row, 33] = (diases.DataSurvivalMale.L + diases.DataSurvivalFemale.L) / 2.0;
-                                            xlNewSheet.Cells[start_row, 34] = (diases.DataSurvivalMale.T + diases.DataSurvivalFemale.T) / 2.0;
-                                            xlNewSheet.Cells[start_row, 35] = (diases.DataSurvivalMale.e0 + diases.DataSurvivalFemale.e0) / 2.0;
-                                            xlNewSheet.Cells[start_row, 36] = (diases.DataSurvivalMale.mxl + diases.DataSurvivalFemale.mxl) / 2.0;
+                                            xlNewSheet.Cells[start_row, 28] = diases.DataSurvivalSumm.mx;
+                                            xlNewSheet.Cells[start_row, 29] = diases.DataSurvivalSumm.qx;
+                                            xlNewSheet.Cells[start_row, 30] = diases.DataSurvivalSumm.px;
+                                            xlNewSheet.Cells[start_row, 31] = diases.DataSurvivalSumm.l;
+                                            xlNewSheet.Cells[start_row, 32] = diases.DataSurvivalSumm.d;
+                                            xlNewSheet.Cells[start_row, 33] = diases.DataSurvivalSumm.L;
+                                            xlNewSheet.Cells[start_row, 34] = diases.DataSurvivalSumm.T;
+                                            xlNewSheet.Cells[start_row, 35] = diases.DataSurvivalSumm.e0;
+                                            xlNewSheet.Cells[start_row, 36] = diases.DataSurvivalSumm.mxl;
 
                                             if (DataDaly.DataPopulation[k].Start_Daly_Bool == true)
                                             {
-                                                (double, double) vrp = (diases.DataSurvivalMale.VRP, diases.DataSurvivalFemale.VRP);
-                                                double vrp_av = 0;
+                                                (double, double, double) vrp = (diases.DataSurvivalMale.VRP, diases.DataSurvivalFemale.VRP, diases.DataSurvivalSumm.VRP);
                                                 if (DataDaly.DataPopulation[k].Id == 19)
                                                 {
                                                     vrp.Item1 /= 2.0;
                                                     vrp.Item2 /= 2.0;
+                                                    vrp.Item3 /= 2.0;
                                                 }
 
-                                                vrp_av = (vrp.Item1 + vrp.Item2) / 2.0;
                                                 vrp_all.Item1 += vrp.Item1;
                                                 vrp_all.Item2 += vrp.Item2;
-                                                vrp_all.Item3 += vrp_av;
+                                                vrp_all.Item3 += vrp.Item3;
 
                                                 xlNewSheet.Cells[start_row, 11] = diases.DataSurvivalMale.YLL;
                                                 xlNewSheet.Cells[start_row, 12] = vrp.Item1;
@@ -272,8 +271,8 @@ namespace Daly
                                                 xlNewSheet.Cells[start_row, 24] = diases.DataSurvivalFemale.YLL;
                                                 xlNewSheet.Cells[start_row, 25] = vrp.Item2;
 
-                                                xlNewSheet.Cells[start_row, 37] = (diases.DataSurvivalMale.YLL + diases.DataSurvivalFemale.YLL) / 2.0;
-                                                xlNewSheet.Cells[start_row, 38] = vrp_av;
+                                                xlNewSheet.Cells[start_row, 37] = diases.DataSurvivalSumm.YLL;
+                                                xlNewSheet.Cells[start_row, 38] = vrp.Item3;
                                             }
                                         }
                                         catch { }

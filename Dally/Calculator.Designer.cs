@@ -226,7 +226,7 @@
             this.dataGridViewTextBoxColumn25.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.dataGridViewTextBoxColumn25.FillWeight = 80F;
             this.dataGridViewTextBoxColumn25.Frozen = true;
-            this.dataGridViewTextBoxColumn25.HeaderText = "Заболевания";
+            this.dataGridViewTextBoxColumn25.HeaderText = "Локализация";
             this.dataGridViewTextBoxColumn25.Name = "dataGridViewTextBoxColumn25";
             this.dataGridViewTextBoxColumn25.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewTextBoxColumn25.Width = 80;
@@ -254,7 +254,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1002, 421);
+            this.ClientSize = new System.Drawing.Size(1002, 423);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.dataGridView7);
             this.Controls.Add(this.dataGridView2);

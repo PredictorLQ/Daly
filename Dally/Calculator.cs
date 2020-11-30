@@ -31,7 +31,7 @@ namespace Daly
                     {
                         diases.AddRange(data[i].DataSetDalyDiases.Where(u => DataDaly.ActivDataDiases_Id.Any(t => t == u.DataDiases_Id)).ToList());
                     }
-                    (double, double) vrp = (diases.Average(t => t.DataSurvivalMale.VRP), diases.Average(t => t.DataSurvivalFemale.VRP));
+                    (double, double,double) vrp = (diases.Average(t => t.DataSurvivalMale.VRP), diases.Average(t => t.DataSurvivalFemale.VRP), diases.Average(t => t.DataSurvivalSumm.VRP));
                     if (item.Id == 19)
                     {
                         vrp.Item1 /= 2.0;

@@ -89,21 +89,21 @@
             // saveDALYDataToFileToolStripMenuItem
             // 
             this.saveDALYDataToFileToolStripMenuItem.Name = "saveDALYDataToFileToolStripMenuItem";
-            this.saveDALYDataToFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveDALYDataToFileToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.saveDALYDataToFileToolStripMenuItem.Text = "Сохранить";
             this.saveDALYDataToFileToolStripMenuItem.Click += new System.EventHandler(this.saveDALYDataToFileToolStripMenuItem_Click);
             // 
             // resetDALYCalculatorToolStripMenuItem
             // 
             this.resetDALYCalculatorToolStripMenuItem.Name = "resetDALYCalculatorToolStripMenuItem";
-            this.resetDALYCalculatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetDALYCalculatorToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.resetDALYCalculatorToolStripMenuItem.Text = "Перезапустить";
             this.resetDALYCalculatorToolStripMenuItem.Click += new System.EventHandler(this.resetDALYCalculatorToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -150,9 +150,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(32, 159);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 13);
+            this.label1.Size = new System.Drawing.Size(75, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Заболевания";
+            this.label1.Text = "Локализации";
             // 
             // button10
             // 
