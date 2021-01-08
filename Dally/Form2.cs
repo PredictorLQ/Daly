@@ -21,9 +21,11 @@ namespace Daly
             dataGridView4.Rows.Clear();
             dataGridView5.Rows.Clear();
             dataGridView6.Rows.Clear();
+            label8.Text = $"( {DataDaly.SelectPaketName[DataDaly.SelectPaket - 1]} )";
+            label8.Visible = true;
             List<DataSetDaly> DataSetDaly = DataDaly.DataSetDaly.Where(u => DataDaly.ActivDataYear_Id.Any(t => t == u.Year) == true
             && DataDaly.ActivDataRegion_Id.Any(t => t == u.DataRegion_Id) == true).ToList();
-            (double, double) vx = (0, 0), ke0_20 = (0, 0), ke_20 = (0, 0), F = (0, 0);
+            (double, double, double) vx = (0, 0, 0), ke0_20 = (0, 0, 0), ke_20 = (0, 0, 0), F = (0, 0, 0);
             foreach (var item in DataDaly.DataPopulation)
             {
                 List<DataSetDalyDiases> diases = new List<DataSetDalyDiases>();
@@ -46,6 +48,7 @@ namespace Daly
                         ke0_20.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_ke0_20);
                         ke_20.Item1 = DataSurvivalPeriod_20_year.Average(t => t.male_ke_20);
                         ke_20.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_ke_20);
+                        ke_20.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_ke_20);
                         F.Item1 = DataSurvivalPeriod_20_year.Average(t => t.male_F);
                         F.Item2 = DataSurvivalPeriod_20_year.Average(t => t.female_F);
                     }
@@ -66,6 +69,11 @@ namespace Daly
                      diases.Average(t => t.DataSurvivalFemale.qx), diases.Average(t => t.DataSurvivalFemale.px), diases.Average(t => t.DataSurvivalFemale.l),
                     diases.Average(t => t.DataSurvivalFemale.d), diases.Average(t => t.DataSurvivalFemale.L), diases.Average(t => t.DataSurvivalFemale.T), diases.Average(t => t.DataSurvivalFemale.e0),
                     diases.Average(t => t.DataSurvivalFemale.mxl));
+                
+                dataGridView8.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalSumm.mx),
+                     diases.Average(t => t.DataSurvivalSumm.qx), diases.Average(t => t.DataSurvivalSumm.px), diases.Average(t => t.DataSurvivalSumm.l),
+                    diases.Average(t => t.DataSurvivalSumm.d), diases.Average(t => t.DataSurvivalSumm.L), diases.Average(t => t.DataSurvivalSumm.T), diases.Average(t => t.DataSurvivalSumm.e0),
+                    diases.Average(t => t.DataSurvivalSumm.mxl));
             }
             dataGridView3.Rows.Add(vx.Item1, ke0_20.Item1, ke_20.Item1, F.Item1);
             dataGridView4.Rows.Add(vx.Item2, ke0_20.Item2, ke_20.Item2, F.Item2);
@@ -75,11 +83,13 @@ namespace Daly
             DataDaly.ActivDataDiases_Id.Count()
             };
             int max = max_count.Max();
-            for(int i=0;i< max; i++)
+            for (int i = 0; i < max; i++)
             {
                 (string, string, string) elem = ("", "", "");
-                try {
-                    elem.Item1 = DataDaly.DataDiases.First(u=>u.Id == DataDaly.ActivDataDiases_Id[i]).Name;
+                try
+                {
+                    DataDiases DataDiases = DataDaly.DataDiases.First(u => u.Id == DataDaly.ActivDataDiases_Id[i]);
+                    elem.Item1 = $"{DataDiases.MCB10} {DataDiases.Name}";
                 }
                 catch { }
                 try
@@ -100,6 +110,5 @@ namespace Daly
         {
 
         }
-
     }
 }

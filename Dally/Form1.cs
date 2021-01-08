@@ -19,9 +19,9 @@ namespace Daly
 
         private Excel.Application excel;
         private DataDaly DataDaly;
-        private readonly string path_excel = "\\excel.xlsx";
-        private readonly string path_data = "\\data.xlsx";
-        private readonly string path_data_min = "\\data-min.xlsx";
+        private readonly string path_excel = "\\населения.xlsx";
+        private readonly string path_data = "\\умершие по болезни.xlsx";
+        private readonly string path_data_min = "\\ожидаемая продолжительность жизни.xlsx";
         private readonly string path_result = "\\Результаты";
         private readonly string[] elem_max = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "YLL", "Потери (руб.)" };
         private readonly string[] elem_min = { "e0", "mxl", "YLL", "Потери (руб.)" };
@@ -123,6 +123,8 @@ namespace Daly
                     progressBar3.Value = progressBar3.Maximum;
                     MessageBox.Show("Данные успешно преробразованы");
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
+                    label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
+                    label8.Visible = true;
                 }
                 catch
                 {
@@ -158,6 +160,8 @@ namespace Daly
                     progressBar3.Value = progressBar3.Maximum;
                     MessageBox.Show("Данные успешно получены и преробразованы");
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
+                    label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
+                    label8.Visible = true;
                 }
                 catch
                 {
@@ -233,7 +237,7 @@ namespace Daly
                 bool max = DataDaly.SelectPaket == 1;
                 int interval = max ? 13 : 6, start = 1, intrevla2 = max ? 8 : 1;
                 string[] elem = max ? elem_max : elem_min;
-                string path = @Application.StartupPath.ToString() + path_result, prepend = max ? "MAX " : "MIN ";
+                string path = @Application.StartupPath.ToString() + path_result, prepend = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1] + " - ";
                 DirectoryInfo dirInfo = new DirectoryInfo(path);
                 if (!dirInfo.Exists)
                     dirInfo.Create();
@@ -245,8 +249,8 @@ namespace Daly
                 progressBar4.Minimum = 0;
                 progressBar4.Value = 0;
                 progressBar4.Maximum = DataDaly.ActivDataRegion_Id.Count * DataDaly.ActivDataDiases_Id.Count * DataDaly.ActivDataYear_Id.Count * DataDaly.DataPopulation.Count;
-                int  count_year = DataDaly.ActivDataYear_Id.Count;
-                List<DataPopulation> count_popul = DataDaly.DataPopulation.Where(u=>(u.Start_Daly_Bool == true && max == false) || max ==true).ToList();
+                int count_year = DataDaly.ActivDataYear_Id.Count;
+                List<DataPopulation> count_popul = DataDaly.DataPopulation.Where(u => (u.Start_Daly_Bool == true && max == false) || max == true).ToList();
                 for (int i = 0; i < DataDaly.ActivDataRegion_Id.Count; i++)
                 {
                     DataRegion DataRegion = DataDaly.DataRegion.FirstOrDefault(u => u.Id == DataDaly.ActivDataRegion_Id[i]);
@@ -263,12 +267,12 @@ namespace Daly
                             {
                                 for (int l = 0; l < count_year; l++)
                                 {
-                                    xlNewSheet.Cells[start_row, start] = DataDiases.Name;
+                                    xlNewSheet.Cells[start_row, start] = $"{DataDiases.MCB10} - {DataDiases.Name}";
                                     xlNewSheet.Cells[start_row, start + 1] = DataDaly.ActivDataYear_Id[l];
                                     start_row++;
                                     xlNewSheet.Cells[start_row, start] = "Мужчины";
                                     xlNewSheet.Cells[start_row, start + interval] = "Женщины";
-                                    xlNewSheet.Cells[start_row, start + interval * 2] = "Сумма";
+                                    xlNewSheet.Cells[start_row, start + interval * 2] = "Мужчины+Женщины";
                                     start_row++;
                                     for (int z = 0; z < elem.Length; z++)
                                     {
@@ -381,7 +385,6 @@ namespace Daly
                 progressBar4.Visible = false;
             }
         }
-
         private void resetDALYCalculatorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Restart();
@@ -441,7 +444,16 @@ namespace Daly
 
         private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
+            checkBox3.Checked = !(listBox3.SelectedItems.Count < listBox3.Items.Count);
+        }
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkBox2.Checked = !(listBox2.SelectedItems.Count < listBox2.Items.Count);
+        }
 
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkBox1.Checked = !(listBox1.SelectedItems.Count < listBox1.Items.Count);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
