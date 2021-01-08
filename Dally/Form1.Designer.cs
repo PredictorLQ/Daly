@@ -31,6 +31,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveDALYDataToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.преобразованиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.полныйПакетToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.частичныйПакетToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDALYCalculatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,7 +75,7 @@
             this.таблицыToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(825, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(792, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -80,30 +83,55 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveDALYDataToFileToolStripMenuItem,
+            this.преобразованиеToolStripMenuItem,
             this.resetDALYCalculatorToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.fileToolStripMenuItem.Text = "Файл";
+            this.fileToolStripMenuItem.MouseHover += new System.EventHandler(this.fileToolStripMenuItem_MouseHover);
             // 
             // saveDALYDataToFileToolStripMenuItem
             // 
             this.saveDALYDataToFileToolStripMenuItem.Name = "saveDALYDataToFileToolStripMenuItem";
-            this.saveDALYDataToFileToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.saveDALYDataToFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveDALYDataToFileToolStripMenuItem.Text = "Сохранить";
             this.saveDALYDataToFileToolStripMenuItem.Click += new System.EventHandler(this.saveDALYDataToFileToolStripMenuItem_Click);
+            // 
+            // преобразованиеToolStripMenuItem
+            // 
+            this.преобразованиеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.полныйПакетToolStripMenuItem,
+            this.частичныйПакетToolStripMenuItem});
+            this.преобразованиеToolStripMenuItem.Name = "преобразованиеToolStripMenuItem";
+            this.преобразованиеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.преобразованиеToolStripMenuItem.Text = "Преобразование";
+            // 
+            // полныйПакетToolStripMenuItem
+            // 
+            this.полныйПакетToolStripMenuItem.Name = "полныйПакетToolStripMenuItem";
+            this.полныйПакетToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.полныйПакетToolStripMenuItem.Text = "Полный пакет";
+            this.полныйПакетToolStripMenuItem.Click += new System.EventHandler(this.полныйПакетToolStripMenuItem_Click);
+            // 
+            // частичныйПакетToolStripMenuItem
+            // 
+            this.частичныйПакетToolStripMenuItem.Name = "частичныйПакетToolStripMenuItem";
+            this.частичныйПакетToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.частичныйПакетToolStripMenuItem.Text = "Частичный пакет";
+            this.частичныйПакетToolStripMenuItem.Click += new System.EventHandler(this.частичныйПакетToolStripMenuItem_Click);
             // 
             // resetDALYCalculatorToolStripMenuItem
             // 
             this.resetDALYCalculatorToolStripMenuItem.Name = "resetDALYCalculatorToolStripMenuItem";
-            this.resetDALYCalculatorToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.resetDALYCalculatorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.resetDALYCalculatorToolStripMenuItem.Text = "Перезапустить";
             this.resetDALYCalculatorToolStripMenuItem.Click += new System.EventHandler(this.resetDALYCalculatorToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Выход";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -130,6 +158,7 @@
             this.таблицыToolStripMenuItem.Name = "таблицыToolStripMenuItem";
             this.таблицыToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
             this.таблицыToolStripMenuItem.Text = "Таблицы";
+            this.таблицыToolStripMenuItem.MouseHover += new System.EventHandler(this.таблицыToolStripMenuItem_MouseHover);
             // 
             // населениеToolStripMenuItem
             // 
@@ -157,7 +186,7 @@
             // button10
             // 
             this.button10.BackColor = System.Drawing.Color.PaleGreen;
-            this.button10.Location = new System.Drawing.Point(259, 482);
+            this.button10.Location = new System.Drawing.Point(263, 482);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(292, 41);
             this.button10.TabIndex = 32;
@@ -218,7 +247,7 @@
             this.groupBox2.Controls.Add(this.listBox1);
             this.groupBox2.Location = new System.Drawing.Point(12, 139);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(788, 337);
+            this.groupBox2.Size = new System.Drawing.Size(765, 337);
             this.groupBox2.TabIndex = 34;
             this.groupBox2.TabStop = false;
             // 
@@ -256,7 +285,7 @@
             this.listBox2.Location = new System.Drawing.Point(322, 43);
             this.listBox2.Name = "listBox2";
             this.listBox2.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBox2.Size = new System.Drawing.Size(235, 277);
+            this.listBox2.Size = new System.Drawing.Size(250, 277);
             this.listBox2.TabIndex = 1;
             // 
             // listBox1
@@ -265,7 +294,7 @@
             this.listBox1.Location = new System.Drawing.Point(23, 43);
             this.listBox1.Name = "listBox1";
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.listBox1.Size = new System.Drawing.Size(269, 277);
+            this.listBox1.Size = new System.Drawing.Size(270, 277);
             this.listBox1.TabIndex = 0;
             // 
             // label4
@@ -340,7 +369,7 @@
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(825, 535);
+            this.ClientSize = new System.Drawing.Size(792, 535);
             this.Controls.Add(this.progressBar4);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.progressBar3);
@@ -405,6 +434,9 @@
         private System.Windows.Forms.Label label6;
         public System.Windows.Forms.ProgressBar progressBar4;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ToolStripMenuItem преобразованиеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem полныйПакетToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem частичныйПакетToolStripMenuItem;
     }
 }
 
