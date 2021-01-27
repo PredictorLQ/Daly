@@ -17,6 +17,7 @@ namespace Daly
     public partial class Form1 : Form
     {
 
+
         private Excel.Application excel;
         private DataDaly DataDaly;
         private readonly string path_excel = "\\населения.xlsx";
@@ -37,7 +38,81 @@ namespace Daly
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //excel = new Excel.Application();
+            //excel2 = new Excel.Application();
 
+            //excel.Visible = false;
+            //excel2.Visible = true;
+            //Excel.Workbook workBook = excel2.Workbooks.Add(Type.Missing);
+
+            //Excel.Workbook book_excel = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_new,
+            //      Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+            //      Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+            //      Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+            //      Type.Missing, Type.Missing);
+            //int count = book_excel.Sheets.Count;
+            //for (int z = 1; z <= book_excel.Sheets.Count; z++)
+            //{
+            //    Excel.Worksheet ObjWorkSheet = (Excel.Worksheet)book_excel.Sheets[z];
+            //    var xlNewSheet = (Excel.Worksheet)workBook.Sheets.Add(After: workBook.ActiveSheet);
+            //    xlNewSheet.Name = ObjWorkSheet.Name;
+            //    xlNewSheet.Cells.NumberFormat = "@";
+
+
+            //    Excel.Range excelRange = ObjWorkSheet.UsedRange;
+            //    int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count;
+            //    List<string>[,] list = new List<string>[rows, colums];
+            //    for (int i = 1, i2 = 1; i < rows; i++, i2++)
+            //    {
+            //        if (i == 1)
+            //            xlNewSheet.get_Range("A1", "B1").Merge();
+            //        if (i == 5)
+            //        {
+            //            string sex = excelRange.Cells[3, 2].Value2.ToString().ToLower(), read = "0";
+            //            xlNewSheet.Cells[i2, 1] = "Чтение";
+            //            if (sex.IndexOf("муж") > -1 || sex.IndexOf("жен") > -1)
+            //                read = "1";
+            //            xlNewSheet.Cells[i2, 2] = read;
+            //            (xlNewSheet.Cells[i2, 1] as Microsoft.Office.Interop.Excel.Range).Font.Bold = true;
+            //            (xlNewSheet.Cells[i2, 1] as Microsoft.Office.Interop.Excel.Range).Interior.Color = (excelRange.Cells[4, 1] as Microsoft.Office.Interop.Excel.Range).Interior.Color;
+            //            i2++;
+            //        }
+            //        for (int j = 1; j <= colums; j++)
+            //        {
+            //            if (excelRange.Cells[i, j] != null && excelRange.Cells[i, j].Value2 != null)
+            //            {
+            //                string text = excelRange.Cells[i, j].Value2.ToString();
+            //                if (i == 6 && j == 1)
+            //                    text = "1-Томская область";
+            //                if (i == 4 && j == 2)
+            //                    text = "7";
+            //                xlNewSheet.Cells[i2, j] = text;
+            //                (xlNewSheet.Cells[i2, j] as Microsoft.Office.Interop.Excel.Range).Interior.Color = (excelRange.Cells[i, j] as Microsoft.Office.Interop.Excel.Range).Interior.Color;
+            //                (xlNewSheet.Cells[i2, j] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle = (excelRange.Cells[i, j] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle;
+            //                if (i < 5)
+            //                    (xlNewSheet.Cells[i2, 1] as Microsoft.Office.Interop.Excel.Range).Font.Bold = true;
+            //                if (i == 7 && j == 1)
+            //                {
+            //                    for (int k = 0; k < 5; k++, i2++)
+            //                    {
+            //                        xlNewSheet.Cells[i2, 1] = k.ToString();
+            //                        (xlNewSheet.Cells[i2, 1] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle = (excelRange.Cells[7, 1] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle;
+            //                        for (int j2 = 2; j2 <= colums; j2++)
+            //                        {
+            //                            xlNewSheet.Cells[i2, j2] = "0";
+            //                            (xlNewSheet.Cells[i2, j2] as Microsoft.Office.Interop.Excel.Range).Interior.Color = (excelRange.Cells[i, j2] as Microsoft.Office.Interop.Excel.Range).Interior.Color;
+            //                            (xlNewSheet.Cells[i2, j2] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle = (excelRange.Cells[i, j2] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle;
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        (xlNewSheet.Cells[13, 1] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle = (excelRange.Cells[7, 1] as Microsoft.Office.Interop.Excel.Range).Borders.LineStyle;
+            //        xlNewSheet.Cells[13, 1] = "0-4";
+            //    }
+            //}
+            //excel.Quit();
+            //GC.Collect();
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -47,8 +122,8 @@ namespace Daly
             bool control = false;
             if (excel != null)
             {
-                try
-                {
+                //try
+                //{
                     excel.Visible = false;
                     Excel.Workbook book_excel = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_excel,
                           Type.Missing, Type.Missing, Type.Missing, Type.Missing,
@@ -61,8 +136,8 @@ namespace Daly
                     control = true;
                     if (control)
                     {
-                        try
-                        {
+                        //try
+                        //{
 
                             progressBar2.Value = progressBar1.Minimum;
                             Excel.Workbook book_data = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_data,
@@ -73,25 +148,27 @@ namespace Daly
                             DataDaly.GetDataSetDaly(book_data, progressBar2);
                             progressBar2.Value = progressBar2.Maximum;
                             book_data.Close(false, Type.Missing, Type.Missing);
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Error: Загрузка данных популяции фатальна");
-                            excel.Quit();
-                        }
+                        //}
+                        //catch
+                        //{
+                        //    MessageBox.Show("Error: Загрузка данных популяции фатальна-1");
+                        //    excel.Quit();
+                        //}
                     }
-                }
-                catch
-                {
-                    Error_Excel = true;
-                    MessageBox.Show("Error: Загрузка данных популяции фатальна");
-                    excel.Quit();
-                }
-                finally
-                {
-                    excel.Quit();
-                    GC.Collect();
-                }
+                excel.Quit();
+                GC.Collect();
+                //}
+                //catch
+                //{
+                //    Error_Excel = true;
+                //    MessageBox.Show("Error: Загрузка данных популяции фатальна -2");
+                //    excel.Quit();
+                //}
+                //finally
+                //{
+                //    excel.Quit();
+                //    GC.Collect();
+                //}
             }
             else
             {

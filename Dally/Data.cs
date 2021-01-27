@@ -36,87 +36,95 @@ namespace Daly
         public static List<int> ActivDataDiases_Id { get; set; }
         static void GetDataSetDalyItem(Excel.Worksheet ObjWorkSheet)
         {
+            string name = ObjWorkSheet.Name;
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
-            string code_mcb10 = excelRange.Cells[2, 2].Value2.ToString();
-            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, row_year = 0, region_id = 0, code_mcb10_id = DataDiases.First(u => u.MCB10 == code_mcb10).Id,
-                row_start = Convert.ToInt32(excelRange.Cells[4, 2].Value2.ToString()), id = 1;
-            bool control = true, Male = excelRange.Cells[3, 2].Value2.IndexOf("муж") > -1;
-            for (int i = row_start; i <= rows; i++)
+            int read = Convert.ToInt32(excelRange.Cells[5, 2].Value2.ToString());
+            if (read == 1)
             {
-                if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
+                string code_mcb10 = excelRange.Cells[2, 2].Value2.ToString();
+                if (DataDiases.FirstOrDefault(u => u.MCB10 == code_mcb10) != null)
                 {
-                    if (excelRange.Cells[i, 1].Value2.ToString() != "")
+                    int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, row_year = 0, region_id = 0, code_mcb10_id = DataDiases.FirstOrDefault(u => u.MCB10 == code_mcb10).Id,
+                        row_start = Convert.ToInt32(excelRange.Cells[4, 2].Value2.ToString()), id = 1;
+                    bool control = true, Male = excelRange.Cells[3, 2].Value2.IndexOf("муж") > -1;
+                    for (int i = row_start; i <= rows; i++)
                     {
-                        if (control == true)
+                        if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
                         {
-                            control = false;
-                            region_id = Convert.ToInt32(excelRange.Cells[i, 1].Value2.ToString().Split(new char[] { '-' })[0]);
-                            row_year = i;
-                        }
-                        else
-                        {
-                            string NamePeriod = excelRange.Cells[i, 1].Value2.ToString();
-                            DataPopulation population = DataPopulation.FirstOrDefault(u => u.Name == NamePeriod);
-                            if (population != null)
+                            if (excelRange.Cells[i, 1].Value2.ToString() != "")
                             {
-                                for (int j = 2; j <= colums; j++)
+                                if (control == true)
                                 {
-                                    int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
-                                    if (year > 0)
+                                    control = false;
+                                    region_id = Convert.ToInt32(excelRange.Cells[i, 1].Value2.ToString().Split(new char[] { '-' })[0]);
+                                    row_year = i;
+                                }
+                                else
+                                {
+                                    string NamePeriod = excelRange.Cells[i, 1].Value2.ToString();
+                                    DataPopulation population = DataPopulation.FirstOrDefault(u => u.Name == NamePeriod);
+                                    if (population != null)
                                     {
-                                        DataSetDaly data_dely = DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region_id);
-                                        DataSetDalyDiases DataSetDalyDiases = data_dely.DataSetDalyDiases.FirstOrDefault(u => u.DataDiases_Id == code_mcb10_id);
-                                        if (DataSetDalyDiases != null)
+                                        for (int j = 2; j <= colums; j++)
                                         {
-                                            if (Male == true)
-                                                DataSetDalyDiases.MaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
-                                            else
-                                                DataSetDalyDiases.FemaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
-                                        }
-                                        else
-                                        {
-                                            DataSetDalyDiases = new DataSetDalyDiases
+                                            int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
+                                            if (year > 0 && DataYear.Any(u=>u== year) ==true)
                                             {
-                                                Id = id,
-                                                DataDiases_Id = code_mcb10_id,
-                                                DataSurvivalMale = new DataSurvival(),
-                                                DataSurvivalFemale = new DataSurvival(),
-                                                DataSurvivalSumm = new DataSurvival(),
-                                            };
-                                            if (Male == true)
-                                                DataSetDalyDiases.MaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
-                                            else
-                                                DataSetDalyDiases.FemaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
-                                            data_dely.DataSetDalyDiases.Add(DataSetDalyDiases);
-                                            id++;
+                                                DataSetDaly data_dely = DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region_id);
+                                                DataSetDalyDiases DataSetDalyDiases = data_dely.DataSetDalyDiases.FirstOrDefault(u => u.DataDiases_Id == code_mcb10_id);
+                                                if (DataSetDalyDiases != null)
+                                                {
+                                                    if (Male == true)
+                                                        DataSetDalyDiases.MaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+                                                    else
+                                                        DataSetDalyDiases.FemaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+                                                }
+                                                else
+                                                {
+                                                    DataSetDalyDiases = new DataSetDalyDiases
+                                                    {
+                                                        Id = id,
+                                                        DataDiases_Id = code_mcb10_id,
+                                                        DataSurvivalMale = new DataSurvival(),
+                                                        DataSurvivalFemale = new DataSurvival(),
+                                                        DataSurvivalSumm = new DataSurvival(),
+                                                    };
+                                                    if (Male == true)
+                                                        DataSetDalyDiases.MaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+                                                    else
+                                                        DataSetDalyDiases.FemaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+                                                    data_dely.DataSetDalyDiases.Add(DataSetDalyDiases);
+                                                    id++;
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
+                            else
+                            {
+                                control = true;
+                            }
                         }
                     }
-                    else
+                    List<DataPopulation> _DataPopulation = DataPopulation.Where(u => u.Excel == false).ToList();
+                    foreach (var item in _DataPopulation)
                     {
-                        control = true;
-                    }
-                }
-            }
-            List<DataPopulation> _DataPopulation = DataPopulation.Where(u => u.Excel == false).ToList();
-            foreach (var item in _DataPopulation)
-            {
-                foreach (var year in DataYear)
-                {
-                    DataSetDaly.Add(new DataSetDaly
-                    {
-                        Id = id,
-                        Year = year,
-                        DataRegion_Id = region_id,
-                        DataPopulation_Id = item.Id,
-                        TrueResult = true,
-                        DataSetDalyDiases = new List<DataSetDalyDiases> {
+                        foreach (var year in DataYear)
+                        {
+                            DataSetDaly.Add(new DataSetDaly
+                            {
+                                Id = id,
+                                Year = year,
+                                DataRegion_Id = region_id,
+                                DataPopulation_Id = item.Id,
+                                TrueResult = true,
+                                DataSetDalyDiases = new List<DataSetDalyDiases> {
                             new DataSetDalyDiases { Id = id, DataDiases_Id = code_mcb10_id}
                         }
-                    });
+                            });
+                        }
+                    }
                 }
             }
         }
@@ -124,96 +132,99 @@ namespace Daly
         {
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
             string code_mcb10 = excelRange.Cells[2, 2].Value2.ToString();
-            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, row_year = 0, region_id = 0, code_mcb10_id = DataDiases.First(u => u.MCB10 == code_mcb10).Id,
-                row_start = Convert.ToInt32(excelRange.Cells[4, 2].Value2.ToString()), id = 1, sex = excelRange.Cells[3, 2].Value2.IndexOf("муж") > -1 ? 1 : excelRange.Cells[3, 2].Value2.IndexOf("жен") > -1 ? 0 : 2;
-            bool control = true;
-            for (int i = row_start; i <= rows; i++)
+            if (DataDiases.FirstOrDefault(u => u.MCB10 == code_mcb10) != null)
             {
-                if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
+                int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, row_year = 0, region_id = 0, code_mcb10_id = DataDiases.First(u => u.MCB10 == code_mcb10).Id,
+                row_start = Convert.ToInt32(excelRange.Cells[4, 2].Value2.ToString()), id = 1, sex = excelRange.Cells[3, 2].Value2.IndexOf("муж") > -1 ? 1 : excelRange.Cells[3, 2].Value2.IndexOf("жен") > -1 ? 0 : 2;
+                bool control = true;
+                for (int i = row_start; i <= rows; i++)
                 {
-                    if (excelRange.Cells[i, 1].Value2.ToString() != "")
+                    if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
                     {
-                        if (control == true)
+                        if (excelRange.Cells[i, 1].Value2.ToString() != "")
                         {
-                            control = false;
-                            region_id = Convert.ToInt32(excelRange.Cells[i, 1].Value2.ToString().Split(new char[] { '-' })[0]);
-                            row_year = i;
-                        }
-                        else
-                        {
-                            string NamePeriod = excelRange.Cells[i, 1].Value2.ToString();
-                            DataPopulation population = DataPopulation.FirstOrDefault(u => u.Name == NamePeriod);
-                            if (population != null)
+                            if (control == true)
                             {
-                                for (int j = 2; j <= colums; j++)
+                                control = false;
+                                region_id = Convert.ToInt32(excelRange.Cells[i, 1].Value2.ToString().Split(new char[] { '-' })[0]);
+                                row_year = i;
+                            }
+                            else
+                            {
+                                string NamePeriod = excelRange.Cells[i, 1].Value2.ToString();
+                                DataPopulation population = DataPopulation.FirstOrDefault(u => u.Name == NamePeriod);
+                                if (population != null)
                                 {
-                                    int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
-                                    if (year > 0)
+                                    for (int j = 2; j <= colums; j++)
                                     {
-                                        DataSetDaly data_dely = DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region_id);
-                                        DataSetDalyDiases DataSetDalyDiases = data_dely.DataSetDalyDiases.FirstOrDefault(u => u.DataDiases_Id == code_mcb10_id);
-                                        if (DataSetDalyDiases != null)
+                                        int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
+                                        if (year > 0 && DataYear.Any(u => u == year) == true)
                                         {
-                                            if (population.Id > 19)
+                                            DataSetDaly data_dely = DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region_id);
+                                            DataSetDalyDiases DataSetDalyDiases = data_dely.DataSetDalyDiases.FirstOrDefault(u => u.DataDiases_Id == code_mcb10_id);
+                                            if (DataSetDalyDiases != null)
                                             {
-                                                int kk = 0;
+                                                if (population.Id > 19)
+                                                {
+                                                    int kk = 0;
+                                                }
+                                                if (sex == 1)
+                                                    DataSetDalyDiases.DataSurvivalMale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
+                                                else if (sex == 0)
+                                                    DataSetDalyDiases.DataSurvivalFemale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
+                                                else
+                                                    DataSetDalyDiases.DataSurvivalSumm.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
                                             }
-                                            if (sex == 1)
-                                                DataSetDalyDiases.DataSurvivalMale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
-                                            else if (sex == 0)
-                                                DataSetDalyDiases.DataSurvivalFemale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
                                             else
-                                                DataSetDalyDiases.DataSurvivalSumm.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
-                                        }
-                                        else
-                                        {
-                                            DataSetDalyDiases = new DataSetDalyDiases
                                             {
-                                                Id = id,
-                                                DataDiases_Id = code_mcb10_id,
-                                                DataSurvivalMale = new DataSurvival(),
-                                                DataSurvivalFemale = new DataSurvival(),
-                                                DataSurvivalSumm = new DataSurvival(),
-                                            };
-                                            if (sex == 1)
-                                                DataSetDalyDiases.DataSurvivalMale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
-                                            else if (sex == 0)
-                                                DataSetDalyDiases.DataSurvivalFemale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
-                                            else
-                                                DataSetDalyDiases.DataSurvivalSumm.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
-                                            data_dely.DataSetDalyDiases.Add(DataSetDalyDiases);
-                                            id++;
-                                            if (population.Id > 19)
-                                            {
-                                                int kk = 0;
+                                                DataSetDalyDiases = new DataSetDalyDiases
+                                                {
+                                                    Id = id,
+                                                    DataDiases_Id = code_mcb10_id,
+                                                    DataSurvivalMale = new DataSurvival(),
+                                                    DataSurvivalFemale = new DataSurvival(),
+                                                    DataSurvivalSumm = new DataSurvival(),
+                                                };
+                                                if (sex == 1)
+                                                    DataSetDalyDiases.DataSurvivalMale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
+                                                else if (sex == 0)
+                                                    DataSetDalyDiases.DataSurvivalFemale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
+                                                else
+                                                    DataSetDalyDiases.DataSurvivalSumm.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
+                                                data_dely.DataSetDalyDiases.Add(DataSetDalyDiases);
+                                                id++;
+                                                if (population.Id > 19)
+                                                {
+                                                    int kk = 0;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                        else
+                            control = true;
                     }
-                    else
-                        control = true;
                 }
-            }
-            List<DataPopulation> _DataPopulation = DataPopulation.Where(u => u.Excel == false).ToList();
-            foreach (var item in _DataPopulation)
-            {
-                foreach (var year in DataYear)
+                List<DataPopulation> _DataPopulation = DataPopulation.Where(u => u.Excel == false).ToList();
+                foreach (var item in _DataPopulation)
                 {
-                    if (DataSetDaly.Any(u => u.Id == id && u.Year == year && u.DataRegion_Id == region_id && u.DataPopulation_Id == item.Id) == false)
-                        DataSetDaly.Add(new DataSetDaly
-                        {
-                            Id = id,
-                            Year = year,
-                            DataRegion_Id = region_id,
-                            DataPopulation_Id = item.Id,
-                            TrueResult = true,
-                            DataSetDalyDiases = new List<DataSetDalyDiases> {
+                    foreach (var year in DataYear)
+                    {
+                        if (DataSetDaly.Any(u => u.Id == id && u.Year == year && u.DataRegion_Id == region_id && u.DataPopulation_Id == item.Id) == false)
+                            DataSetDaly.Add(new DataSetDaly
+                            {
+                                Id = id,
+                                Year = year,
+                                DataRegion_Id = region_id,
+                                DataPopulation_Id = item.Id,
+                                TrueResult = true,
+                                DataSetDalyDiases = new List<DataSetDalyDiases> {
                             new DataSetDalyDiases { Id = id, DataDiases_Id = code_mcb10_id}
                         }
-                        });
+                            });
+                    }
                 }
             }
         }
@@ -839,7 +850,7 @@ namespace Daly
         {
             int year = DataSetDaly.Year,
                 DataPopulation_Id = DataSetDaly.DataPopulation_Id;
-            if (DataPopulation_Id == 20)
+            if (DataPopulation_Id == 22)
                 return (1, 1, 1);
             if (DataPopulation_Id < 6)
             {
@@ -966,7 +977,7 @@ namespace Daly
                 return (100000, 100000, 100000);
             DataSetDaly data = DataDaly.DataSetDaly.First(u => u.DataPopulation_Id == DataSetDaly.DataPopulation_Id - 1 && u.Year == DataSetDaly.Year && u.DataRegion_Id == DataSetDaly.DataRegion_Id);
             DataSetDalyDiases DataSetDalyDiases = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diaes);
-            if (DataSetDaly.DataPopulation_Id == 21)
+            if (DataSetDaly.DataPopulation_Id == 23)
                 return (DataSetDalyDiases.DataSurvivalMale.l, DataSetDalyDiases.DataSurvivalFemale.l, DataSetDalyDiases.DataSurvivalSumm.l);
             double data_male = DataSetDalyDiases.DataSurvivalMale.px * DataSetDalyDiases.DataSurvivalMale.l,
                 data_female = DataSetDalyDiases.DataSurvivalFemale.px * DataSetDalyDiases.DataSurvivalFemale.l,
@@ -1021,7 +1032,7 @@ namespace Daly
             double data_male = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalMale.l,
                 data_female = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalFemale.l,
                 data_summ = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalSumm.l;
-            if (period == 20)
+            if (period == 22)
                 return (data_male, data_female, data_summ);
             if (period == 25)
                 return (3.5 * data_male, 3.5 * data_female, 3.5 * data_summ);
@@ -1059,7 +1070,7 @@ namespace Daly
             double data_male_two = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalMale.T,
                 data_female_two = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalFemale.T,
                 data_summ_two = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalSumm.T;
-            if (period == 20)
+            if (period == 22)
                 return (data_male_two, data_female_two, data_summ_two);
             return ((data_l_male + data_male_two), (data_l_female + data_female_two), data_l_summ + data_summ_two);
         }
@@ -1149,8 +1160,8 @@ namespace Daly
             int period = DataSetDaly.DataPopulation_Id, period_next = period + 1;
             if (period == 1)
                 period_next = 6;
-            if (period == 20)
-                period_next = 22;
+            if (period == 22)
+                period_next = 24;
             DataSetDaly data = DataDaly.DataSetDaly.FirstOrDefault(u => u.DataPopulation_Id == period_next && u.DataRegion_Id == DataSetDaly.DataRegion_Id && u.Year == DataSetDaly.Year);
             if (data == null)
                 return (0, 0, 0);
@@ -1166,12 +1177,12 @@ namespace Daly
 
             double period_daly = popul_period.PeriodDied - popul_period.Start_Daly,
                 start_daly = popul_period_next.Start_Daly - popul_period.Start_Daly;
-            if (period_next == 22)
+            if (period_next == 24)
                 start_daly = 5;
             double data_e0_male = male_period + period_daly * (male_period_next - male_period) / start_daly,
                 data_e0_female = female_period + period_daly * (female_period_next - female_period) / start_daly,
                 data_e0_summ = summ_period + period_daly * (summ_period_next - summ_period) / start_daly;
-            if (period_next == 22)
+            if (period_next == 24)
                 return (data_e0_male, data_e0_female, data_e0_summ);
 
             return (data_e0_male, data_e0_female, data_e0_summ);
