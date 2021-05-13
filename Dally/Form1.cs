@@ -19,8 +19,12 @@ namespace Daly
 
         private Excel.Application excel;
         private DataDaly DataDaly;
-        private readonly string path_excel = "\\населения.xlsx";
-        private readonly string path_data = "\\умершие по болезни.xlsx";
+        private readonly string path_excel = "\\справочная.xlsx";
+        private readonly string path_excel_people = "\\население.xlsx";
+        private readonly string path_excel_died_all = "\\смертность от всех причин.xlsx";
+        private readonly string path_excel_birth = "\\Рождаемость.xlsx";
+        private readonly string path_excel_vrp = "\\ВРП.xlsx";
+        private readonly string path_data = "\\Умершие от рака.xlsx";
         private readonly string path_data_min = "\\ожидаемая продолжительность жизни.xlsx";
         private readonly string path_result = "\\Результаты";
         private readonly string[] elem_max = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "YLL", "Потери (руб.)" };
@@ -56,9 +60,51 @@ namespace Daly
                           Type.Missing, Type.Missing, Type.Missing, Type.Missing,
                           Type.Missing, Type.Missing);
                     DataDaly.GetInfoData(book_excel, progressBar1);
-                    book_excel.Close(false, Type.Missing, Type.Missing);
-                    progressBar1.Value = progressBar1.Maximum;
                     control = true;
+                    if (control)
+                    {
+                        book_excel = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_excel_people,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing);
+                        DataDaly.GetInfoDataPeople(book_excel, progressBar1);
+                        control = true;
+
+                    }
+                    if (control)
+                    {
+                        book_excel = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_excel_died_all,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing);
+                        DataDaly.GetInfoDataDied(book_excel, progressBar1);
+                        control = true;
+
+                    }
+                    if (control)
+                    {
+                        book_excel = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_excel_birth,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing);
+                        DataDaly.GetInfoDataBirth(book_excel, progressBar1);
+                        control = true;
+
+                    }
+                    if (control)
+                    {
+                        book_excel = excel.Workbooks.Open(@Application.StartupPath.ToString() + path_excel_vrp,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                          Type.Missing, Type.Missing);
+                        DataDaly.GetInfoDataVRP(book_excel, progressBar1);
+                        control = true;
+
+                    }
                     if (control)
                     {
                         try
@@ -97,7 +143,7 @@ namespace Daly
             {
                 MessageBox.Show("Error: Экземпляр Excel не создан");
             }
-            if (Error_Excel == false)
+            if (!Error_Excel)
             {
                 //Thread myThread = new Thread(new ParameterizedThreadStart(DataDaly.GetSurvival));
                 //myThread.IsBackground = true;
@@ -106,44 +152,48 @@ namespace Daly
                 listBox1.DataSource = DataDaly.DataDiases.Select(u => u.Name).ToList();
                 listBox2.DataSource = DataDaly.DataRegion.Select(u => u.Name).ToList();
                 listBox3.DataSource = DataDaly.DataYear;
+                button1.Visible = true;
+                button2.Visible = true;
+                label9.Visible = true;
                 //myThread.Join();
             }
         }
 
-        private void полныйПакетToolStripMenuItem_Click(object sender, EventArgs e)
+        private void button2_Click_1(object sender, EventArgs e)
         {
             if (Error_Excel == false)
             {
-                try
-                {
-                    progressBar3.Value = progressBar1.Minimum;
-                    DataDaly.SelectPaket = 1;
+                //try
+                //{
+                progressBar3.Value = progressBar1.Minimum;
+                DataDaly.SelectPaket = 1;
 
-                    DataDaly.GetSurvival(progressBar3);
-                    progressBar3.Value = progressBar3.Maximum;
-                    MessageBox.Show("Данные успешно преробразованы");
-                    ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
-                    label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
-                    label8.Visible = true;
-                }
-                catch
-                {
-                    MessageBox.Show("Error: Преобразование фатально");
-                }
-                finally
-                {
-                    excel.Quit();
-                    GC.Collect();
-                }
+                DataDaly.GetSurvival(progressBar3);
+                progressBar3.Value = progressBar3.Maximum;
+                MessageBox.Show("Данные успешно преробразованы");
+                ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
+                label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
+                label8.Visible = true;
+                //}
+                //catch
+                //{
+                //    MessageBox.Show("Error: Преобразование фатально");
+                //}
+                //finally
+                //{
+                //    excel.Quit();
+                //    GC.Collect();
+                //}
             }
         }
 
-        private void частичныйПакетToolStripMenuItem_Click(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e)
         {
+
             if (Error_Excel == false)
             {
-                try
-                {
+                //try
+                //{
                     DataDaly.SelectPaket = 2;
                     progressBar2.Value = progressBar1.Minimum;
                     progressBar3.Value = progressBar1.Minimum;
@@ -162,17 +212,17 @@ namespace Daly
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
                     label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
                     label8.Visible = true;
-                }
-                catch
-                {
-                    ControlSave = false; ControlWrite = false; button10.Enabled = ControlWrite;
-                    MessageBox.Show("Error: Загрузка данных фатальна");
-                }
-                finally
-                {
-                    excel.Quit();
-                    GC.Collect();
-                }
+                //}
+                //catch
+                //{
+                //    ControlSave = false; ControlWrite = false; button10.Enabled = ControlWrite;
+                //    MessageBox.Show("Error: Загрузка данных фатальна");
+                //}
+                //finally
+                //{
+                //    excel.Quit();
+                //    GC.Collect();
+                //}
             }
         }
 

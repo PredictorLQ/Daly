@@ -335,7 +335,6 @@ namespace Daly
             {
                 if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
                 {
-
                     if (excelRange.Cells[i, 1].Value2.ToString() != "")
                     {
                         if (control == true)
@@ -435,12 +434,9 @@ namespace Daly
                             }
                         }
                     }
-                    else
-                    {
-                        control = true;
-                    }
+                    else control = true;
                 }
-                else { control = true; }
+                else control = true;
             }
             return 1;
         }
@@ -448,22 +444,229 @@ namespace Daly
         {
             DataSetDaly = new List<DataSetDaly>();
             DataVRP = new List<DataVRP>();
+            ProgressBar.Minimum = 0;
+            ProgressBar.Value = 0;
+            ProgressBar.Maximum = 1;
+
+            ProgressBar.Value++;
+            GetInfo((Excel.Worksheet)excel_data.Sheets[1]);
+            excel_data.Close(false, Type.Missing, Type.Missing);
+            ProgressBar.Value = ProgressBar.Maximum;
+        }
+        public int GetInfoDataDiedItem(Excel.Worksheet ObjWorkSheet)
+        {
+            Excel.Range excelRange = ObjWorkSheet.UsedRange;
+            string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
+            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2, id = 1;
+            bool control = true, Male = excelRange.Cells[1, 1].Value2.IndexOf("муж") > -1;
+            for (int i = 1; i <= rows; i++)
+            {
+                if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
+                {
+                    if (excelRange.Cells[i, 1].Value2.ToString() != "")
+                    {
+                        if (control == true)
+                        {
+                            control = false;
+                            num++;
+                            Male = excelRange.Cells[i, 1].Value2.ToString().IndexOf("муж") > -1;
+                            i++;
+                            row_year = i;
+                            if (num > 2) break;
+                        }
+                        else
+                        {
+                            string NamePeriod = excelRange.Cells[i, 1].Value2.ToString();
+                            DataPopulation population = DataPopulation.FirstOrDefault(u => u.Name == NamePeriod);
+                            if (population != null)
+                            {
+                                for (int j = 2; j <= colums; j++)
+                                {
+                                    int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
+                                    DataSetDaly data_dely = DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region);
+                                    if (Male == true)
+                                        data_dely.MaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+                                    else
+                                        data_dely.FemaleDied = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+
+                                }
+
+                            }
+                        }
+                    }
+                    else control = true;
+                }
+                else control = true;
+            }
+            return 1;
+        }
+        public void GetInfoDataDied(Excel.Workbook excel_data, ProgressBar ProgressBar)
+        {
             List<Task> tasks1 = new List<Task>();
             ProgressBar.Minimum = 0;
             ProgressBar.Value = 0;
             ProgressBar.Maximum = excel_data.Sheets.Count + 1;
 
             ProgressBar.Value++;
-            GetInfo((Excel.Worksheet)excel_data.Sheets[1]);
-            ProgressBar.Value++;
-            for (int i = 2; i <= excel_data.Sheets.Count; i++)
+            for (int i = 1; i <= excel_data.Sheets.Count; i++)
             {
-                Task<int> task = new Task<int>(() => GetInfoDataItem((Excel.Worksheet)excel_data.Sheets[i]));
+                Task<int> task = new Task<int>(() => GetInfoDataDiedItem((Excel.Worksheet)excel_data.Sheets[i]));
                 tasks1.Add(task);
                 task.Start();
                 ProgressBar.Value += task.Result;
             }
             Task.WaitAll(tasks1.ToArray());
+            ProgressBar.Value = ProgressBar.Maximum;
+        }
+        public int GetInfoDataPeopleItem(Excel.Worksheet ObjWorkSheet)
+        {
+            Excel.Range excelRange = ObjWorkSheet.UsedRange;
+            string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
+            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2, id = 1;
+            bool control = true, Male = excelRange.Cells[1, 1].Value2.IndexOf("муж") > -1;
+            for (int i = 1; i <= rows; i++)
+            {
+                if (excelRange.Cells[i, 1] != null && excelRange.Cells[i, 1].Value2 != null)
+                {
+                    if (excelRange.Cells[i, 1].Value2.ToString() != "")
+                    {
+                        if (control)
+                        {
+                            control = false;
+                            num++;
+                            Male = excelRange.Cells[i, 1].Value2.ToString().IndexOf("муж") > -1;
+                            i++;
+                            row_year = i;
+                            if (num > 2) break;
+                        }
+                        else
+                        {
+                            string NamePeriod = excelRange.Cells[i, 1].Value2.ToString();
+                            DataPopulation population = DataPopulation.FirstOrDefault(u => u.Name == NamePeriod);
+                            if (population != null)
+                            {
+                                for (int j = 2; j <= colums; j++)
+                                {
+                                    int year = Convert.ToInt32(excelRange.Cells[row_year, j].Value2);
+                                    if (num == 2)
+                                        DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region).FemaleLife = Convert.ToInt32(excelRange.Cells[i, j].Value2);
+                                    else
+                                        DataSetDaly.Add(new DataSetDaly
+                                        {
+                                            Id = id,
+                                            Year = year,
+                                            DataRegion_Id = region,
+                                            DataPopulation_Id = population.Id,
+                                            MaleLife = Convert.ToInt32(excelRange.Cells[i, j].Value2),
+                                            TrueResult = true,
+                                            DataSetDalyDiases = new List<DataSetDalyDiases>()
+                                        });
+                                }
+
+                            }
+                        }
+                    }
+                    else control = true;
+                }
+                else control = true;
+            }
+            return 1;
+        }
+        public void GetInfoDataPeople(Excel.Workbook excel_data, ProgressBar ProgressBar)
+        {
+            List<Task> tasks1 = new List<Task>();
+            ProgressBar.Minimum = 0;
+            ProgressBar.Value = 0;
+            ProgressBar.Maximum = excel_data.Sheets.Count + 1;
+
+            ProgressBar.Value++;
+            for (int i = 1; i <= excel_data.Sheets.Count; i++)
+            {
+                Task<int> task = new Task<int>(() => GetInfoDataPeopleItem((Excel.Worksheet)excel_data.Sheets[i]));
+                tasks1.Add(task);
+                task.Start();
+                ProgressBar.Value += task.Result;
+            }
+            Task.WaitAll(tasks1.ToArray());
+            ProgressBar.Value = ProgressBar.Maximum;
+        }
+        public int GetInfoDataVRPItem(Excel.Worksheet ObjWorkSheet)
+        {
+            Excel.Range excelRange = ObjWorkSheet.UsedRange;
+            string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
+            int colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]);
+            for (int j = 2; j <= colums; j++)
+            {
+                //try
+                //{
+                    int year = Convert.ToInt32(excelRange.Cells[1, j].Value2);
+                    DataVRP.Add(new DataVRP
+                    {
+                        Year = year,
+                        DataRegion_Id = region,
+                        VRP = Convert.ToDouble(excelRange.Cells[2, j].Value2)
+                    });
+                //}
+                //catch { }
+            }
+            return 1;
+        }
+        public int GetInfoDataBirthItem(Excel.Worksheet ObjWorkSheet)
+        {
+            Excel.Range excelRange = ObjWorkSheet.UsedRange;
+            string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
+            int colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]);
+            for (int j = 2; j <= colums; j++)
+            {
+                //try
+                //{
+                    int year = Convert.ToInt32(excelRange.Cells[1, j].Value2);
+                    List<DataSetDaly> data_dely = DataSetDaly.Where(u => u.Year == year && u.DataRegion_Id == region).ToList();
+                    for (int k = 0; k < data_dely.Count; k++)
+                    {
+                        data_dely[k].MaleBirth = Convert.ToInt32(excelRange.Cells[2, j].Value2);
+                        data_dely[k].FemaleBirth = Convert.ToInt32(excelRange.Cells[3, j].Value2);
+                    }
+                //}
+                //catch { }
+            }
+            return 1;
+        }
+        public void GetInfoDataVRP(Excel.Workbook excel_data, ProgressBar ProgressBar)
+        {
+            List<Task> tasks1 = new List<Task>();
+            ProgressBar.Minimum = 0;
+            ProgressBar.Value = 0;
+            ProgressBar.Maximum = excel_data.Sheets.Count + 1;
+
+            ProgressBar.Value++;
+            for (int i = 1; i <= excel_data.Sheets.Count; i++)
+            {
+                Task<int> task = new Task<int>(() => GetInfoDataVRPItem((Excel.Worksheet)excel_data.Sheets[i]));
+                tasks1.Add(task);
+                task.Start();
+                ProgressBar.Value += task.Result;
+            }
+            Task.WaitAll(tasks1.ToArray());
+            excel_data.Close(false, Type.Missing, Type.Missing);
+            ProgressBar.Value = ProgressBar.Maximum;
+        }
+        public void GetInfoDataBirth(Excel.Workbook excel_data, ProgressBar ProgressBar)
+        {
+            List<Task> tasks1 = new List<Task>();
+            ProgressBar.Minimum = 0;
+            ProgressBar.Value = 0;
+            ProgressBar.Maximum = excel_data.Sheets.Count + 1;
+            ProgressBar.Value++;
+            for (int i = 1; i <= excel_data.Sheets.Count; i++)
+            {
+                Task<int> task = new Task<int>(() => GetInfoDataBirthItem((Excel.Worksheet)excel_data.Sheets[i]));
+                tasks1.Add(task);
+                task.Start();
+                ProgressBar.Value += task.Result;
+            }
+            Task.WaitAll(tasks1.ToArray());
+            excel_data.Close(false, Type.Missing, Type.Missing);
             ProgressBar.Value = ProgressBar.Maximum;
         }
         public void GetSurvival(object obj)
