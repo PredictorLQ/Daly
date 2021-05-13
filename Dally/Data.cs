@@ -20,6 +20,7 @@ namespace Daly
     }
     public class DataDaly
     {
+        static int id = 0;
         public static int SelectPaket { get; set; }
         public static string[] SelectPaketName { get; set; } = { "готовая ОПЖ", "расчетная ОПЖ" };
         public static List<DataRegion> DataRegion;
@@ -39,7 +40,7 @@ namespace Daly
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
             string code_mcb10 = excelRange.Cells[2, 2].Value2.ToString();
             int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, row_year = 0, region_id = 0, code_mcb10_id = DataDiases.First(u => u.MCB10 == code_mcb10).Id,
-                row_start = Convert.ToInt32(excelRange.Cells[4, 2].Value2.ToString()), id = 1;
+                row_start = Convert.ToInt32(excelRange.Cells[4, 2].Value2.ToString());
             bool control = true, Male = excelRange.Cells[3, 2].Value2.IndexOf("муж") > -1;
             for (int i = row_start; i <= rows; i++)
             {
@@ -106,6 +107,7 @@ namespace Daly
             {
                 foreach (var year in DataYear)
                 {
+                    id++;
                     DataSetDaly.Add(new DataSetDaly
                     {
                         Id = id,
@@ -154,10 +156,6 @@ namespace Daly
                                         DataSetDalyDiases DataSetDalyDiases = data_dely.DataSetDalyDiases.FirstOrDefault(u => u.DataDiases_Id == code_mcb10_id);
                                         if (DataSetDalyDiases != null)
                                         {
-                                            if (population.Id > 19)
-                                            {
-                                                int kk = 0;
-                                            }
                                             if (sex == 1)
                                                 DataSetDalyDiases.DataSurvivalMale.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
                                             else if (sex == 0)
@@ -183,10 +181,6 @@ namespace Daly
                                                 DataSetDalyDiases.DataSurvivalSumm.e0 = Convert.ToDouble(excelRange.Cells[i, j].Value2);
                                             data_dely.DataSetDalyDiases.Add(DataSetDalyDiases);
                                             id++;
-                                            if (population.Id > 19)
-                                            {
-                                                int kk = 0;
-                                            }
                                         }
                                     }
                                 }
@@ -329,7 +323,7 @@ namespace Daly
         {
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
             string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
-            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2, id = 1;
+            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2;
             bool control = true, Male = excelRange.Cells[1, 1].Value2.IndexOf("муж") > -1;
             for (int i = 1; i <= rows; i++)
             {
@@ -457,7 +451,7 @@ namespace Daly
         {
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
             string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
-            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2, id = 1;
+            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2;
             bool control = true, Male = excelRange.Cells[1, 1].Value2.IndexOf("муж") > -1;
             for (int i = 1; i <= rows; i++)
             {
@@ -522,7 +516,7 @@ namespace Daly
         {
             Excel.Range excelRange = ObjWorkSheet.UsedRange;
             string[] world = ObjWorkSheet.Name.Split(new char[] { '-' });
-            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2, id = 1;
+            int rows = excelRange.Rows.Count, colums = excelRange.Columns.Count, region = Convert.ToInt32(world[0]), num = 0, row_year = 2;
             bool control = true, Male = excelRange.Cells[1, 1].Value2.IndexOf("муж") > -1;
             for (int i = 1; i <= rows; i++)
             {
@@ -551,6 +545,8 @@ namespace Daly
                                     if (num == 2)
                                         DataSetDaly.First(u => u.Year == year && u.DataPopulation_Id == population.Id && u.DataRegion_Id == region).FemaleLife = Convert.ToInt32(excelRange.Cells[i, j].Value2);
                                     else
+                                    {
+                                        id++;
                                         DataSetDaly.Add(new DataSetDaly
                                         {
                                             Id = id,
@@ -561,6 +557,7 @@ namespace Daly
                                             TrueResult = true,
                                             DataSetDalyDiases = new List<DataSetDalyDiases>()
                                         });
+                                    }
                                 }
 
                             }
@@ -599,13 +596,13 @@ namespace Daly
             {
                 //try
                 //{
-                    int year = Convert.ToInt32(excelRange.Cells[1, j].Value2);
-                    DataVRP.Add(new DataVRP
-                    {
-                        Year = year,
-                        DataRegion_Id = region,
-                        VRP = Convert.ToDouble(excelRange.Cells[2, j].Value2)
-                    });
+                int year = Convert.ToInt32(excelRange.Cells[1, j].Value2);
+                DataVRP.Add(new DataVRP
+                {
+                    Year = year,
+                    DataRegion_Id = region,
+                    VRP = Convert.ToDouble(excelRange.Cells[2, j].Value2)
+                });
                 //}
                 //catch { }
             }
@@ -620,13 +617,13 @@ namespace Daly
             {
                 //try
                 //{
-                    int year = Convert.ToInt32(excelRange.Cells[1, j].Value2);
-                    List<DataSetDaly> data_dely = DataSetDaly.Where(u => u.Year == year && u.DataRegion_Id == region).ToList();
-                    for (int k = 0; k < data_dely.Count; k++)
-                    {
-                        data_dely[k].MaleBirth = Convert.ToInt32(excelRange.Cells[2, j].Value2);
-                        data_dely[k].FemaleBirth = Convert.ToInt32(excelRange.Cells[3, j].Value2);
-                    }
+                int year = Convert.ToInt32(excelRange.Cells[1, j].Value2);
+                List<DataSetDaly> data_dely = DataSetDaly.Where(u => u.Year == year && u.DataRegion_Id == region).ToList();
+                for (int k = 0; k < data_dely.Count; k++)
+                {
+                    data_dely[k].MaleBirth = Convert.ToInt32(excelRange.Cells[2, j].Value2);
+                    data_dely[k].FemaleBirth = Convert.ToInt32(excelRange.Cells[3, j].Value2);
+                }
                 //}
                 //catch { }
             }
@@ -1224,7 +1221,7 @@ namespace Daly
             double data_male = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalMale.l,
                 data_female = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalFemale.l,
                 data_summ = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalSumm.l;
-            if (period == 20)
+            if (period == 22)
                 return (data_male, data_female, data_summ);
             if (period == 25)
                 return (3.5 * data_male, 3.5 * data_female, 3.5 * data_summ);
@@ -1262,7 +1259,7 @@ namespace Daly
             double data_male_two = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalMale.T,
                 data_female_two = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalFemale.T,
                 data_summ_two = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diases).DataSurvivalSumm.T;
-            if (period == 20)
+            if (period == 22)
                 return (data_male_two, data_female_two, data_summ_two);
             return ((data_l_male + data_male_two), (data_l_female + data_female_two), data_l_summ + data_summ_two);
         }
@@ -1352,7 +1349,7 @@ namespace Daly
             int period = DataSetDaly.DataPopulation_Id, period_next = period + 1;
             if (period == 1)
                 period_next = 6;
-            if (period == 20)
+            if (period == 22)
                 period_next = 22;
             DataSetDaly data = DataDaly.DataSetDaly.FirstOrDefault(u => u.DataPopulation_Id == period_next && u.DataRegion_Id == DataSetDaly.DataRegion_Id && u.Year == DataSetDaly.Year);
             if (data == null)

@@ -163,27 +163,27 @@ namespace Daly
         {
             if (Error_Excel == false)
             {
-                //try
-                //{
-                progressBar3.Value = progressBar1.Minimum;
-                DataDaly.SelectPaket = 1;
+                try
+                {
+                    progressBar3.Value = progressBar1.Minimum;
+                    DataDaly.SelectPaket = 1;
 
-                DataDaly.GetSurvival(progressBar3);
-                progressBar3.Value = progressBar3.Maximum;
-                MessageBox.Show("Данные успешно преробразованы");
-                ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
-                label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
-                label8.Visible = true;
-                //}
-                //catch
-                //{
-                //    MessageBox.Show("Error: Преобразование фатально");
-                //}
-                //finally
-                //{
-                //    excel.Quit();
-                //    GC.Collect();
-                //}
+                    DataDaly.GetSurvival(progressBar3);
+                    progressBar3.Value = progressBar3.Maximum;
+                    MessageBox.Show("Данные успешно преробразованы");
+                    ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
+                    label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
+                    label8.Visible = true;
+                }
+                catch
+                {
+                    MessageBox.Show("Error: Преобразование фатально");
+                }
+                finally
+                {
+                    excel.Quit();
+                    GC.Collect();
+                }
             }
         }
 
@@ -192,8 +192,8 @@ namespace Daly
 
             if (Error_Excel == false)
             {
-                //try
-                //{
+                try
+                {
                     DataDaly.SelectPaket = 2;
                     progressBar2.Value = progressBar1.Minimum;
                     progressBar3.Value = progressBar1.Minimum;
@@ -212,17 +212,17 @@ namespace Daly
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
                     label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
                     label8.Visible = true;
-                //}
-                //catch
-                //{
-                //    ControlSave = false; ControlWrite = false; button10.Enabled = ControlWrite;
-                //    MessageBox.Show("Error: Загрузка данных фатальна");
-                //}
-                //finally
-                //{
-                //    excel.Quit();
-                //    GC.Collect();
-                //}
+                }
+                catch
+                {
+                    ControlSave = false; ControlWrite = false; button10.Enabled = ControlWrite;
+                    MessageBox.Show("Error: Загрузка данных фатальна");
+                }
+                finally
+                {
+                    excel.Quit();
+                    GC.Collect();
+                }
             }
         }
 
