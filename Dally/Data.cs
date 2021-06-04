@@ -22,7 +22,7 @@ namespace Daly
     {
         static int id = 0;
         public static int SelectPaket { get; set; }
-        public static string[] SelectPaketName { get; set; } = { "готовая ОПЖ", "расчетная ОПЖ" };
+        public static string[] SelectPaketName { get; set; } = { "расчетная ОПЖ", "готовая ОПЖ" };
         public static List<DataRegion> DataRegion;
         public static List<DataDiases> DataDiases;
         public static List<DataPopulation> DataPopulation;
@@ -701,7 +701,7 @@ namespace Daly
                         {
                             mx = mx_summ
                         };
-                        if (items.DataPopulation_Id >= 6 && items.DataPopulation_Id < 21)
+                        if (items.DataPopulation_Id >= 6 && items.DataPopulation_Id < 23)
                         {
                             try
                             {
@@ -715,11 +715,11 @@ namespace Daly
                             item.DataSurvivalFemale.px = DataFunction.GetSurvival_px(item.DataSurvivalFemale.qx);
                             item.DataSurvivalSumm.px = DataFunction.GetSurvival_px(item.DataSurvivalSumm.qx);
                         }
-                        else if (items.DataPopulation_Id >= 21)
+                        else if (items.DataPopulation_Id >= 23)
                         {
                             try
                             {
-                                DataSetDaly data70 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 19 && u.DataRegion_Id == items.DataRegion_Id);
+                                DataSetDaly data70 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 21 && u.DataRegion_Id == items.DataRegion_Id);
                                 int diases_id = data70.DataSetDalyDiases.First(u => u.DataDiases_Id == item.DataDiases_Id).Id;
                                 (double, double, double) data_px = DataFunction.GetSurvival_px_two(diases_id, items.DataPopulation_Id);
                                 item.DataSurvivalMale.px = data_px.Item1;
@@ -729,7 +729,7 @@ namespace Daly
                             catch { }
                             item.DataSurvivalMale.qx = DataFunction.GetSurvival_px(item.DataSurvivalMale.px);
                             item.DataSurvivalFemale.qx = DataFunction.GetSurvival_px(item.DataSurvivalFemale.px);
-                            item.DataSurvivalFemale.qx = DataFunction.GetSurvival_px(item.DataSurvivalSumm.px);
+                            item.DataSurvivalSumm.qx = DataFunction.GetSurvival_px(item.DataSurvivalSumm.px);
                         }
                         if (items.DataPopulation_Id == 9)
                         {
@@ -739,19 +739,19 @@ namespace Daly
                             };
                             DataSurvivalPeriod_20_year.Add(_DataSurvivalPeriod_20_year);
                         }
-                        if (items.DataPopulation_Id == 19)
+                        if (items.DataPopulation_Id == 21)
                         {
                             (double, double, double) px_year_60 = (0, 0, 0), px_year_65 = (0, 0, 0);
                             try
                             {
-                                DataSetDaly data60 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 17 && u.DataRegion_Id == items.DataRegion_Id);
+                                DataSetDaly data60 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 19 && u.DataRegion_Id == items.DataRegion_Id);
                                 DataSetDalyDiases Diases_60_year = data60.DataSetDalyDiases.First(u => u.DataDiases_Id == item.DataDiases_Id);
                                 px_year_60 = (Diases_60_year.DataSurvivalMale.px, Diases_60_year.DataSurvivalFemale.px, Diases_60_year.DataSurvivalSumm.px);
                             }
                             catch { }
                             try
                             {
-                                DataSetDaly data65 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 18 && u.DataRegion_Id == items.DataRegion_Id);
+                                DataSetDaly data65 = DataSetDaly.First(u => u.Year == items.Year && u.DataPopulation_Id == 20 && u.DataRegion_Id == items.DataRegion_Id);
                                 DataSetDalyDiases Diases_65_year = data65.DataSetDalyDiases.First(u => u.DataDiases_Id == item.DataDiases_Id);
                                 px_year_65 = (Diases_65_year.DataSurvivalMale.px, Diases_65_year.DataSurvivalFemale.px, Diases_65_year.DataSurvivalSumm.px);
                             }
@@ -945,6 +945,10 @@ namespace Daly
                                 item.DataSurvivalMale.YLL = data_YLL.Item1;
                                 item.DataSurvivalFemale.YLL = data_YLL.Item2;
                                 item.DataSurvivalSumm.YLL = data_YLL.Item3;
+
+                                item.DataSurvivalMale.YLL100000 = DataFunction.GetSurvival_YLL100000(DataSetDaly[i].MaleLife, data_YLL.Item1);
+                                item.DataSurvivalFemale.YLL100000 = DataFunction.GetSurvival_YLL100000(DataSetDaly[i].FemaleLife, data_YLL.Item2);
+                                item.DataSurvivalSumm.YLL100000 = DataFunction.GetSurvival_YLL100000(DataSetDaly[i].MaleLife + DataSetDaly[i].FemaleLife, data_YLL.Item3);
                             }
                             catch { }
                             try
@@ -977,7 +981,7 @@ namespace Daly
             DataSetDaly = DataSetDaly.OrderBy(u => u.DataRegion_Id).ThenBy(u => u.DataPopulation_Id).ThenBy(u => u.Year).ToList();
             ProgressBar.Value++;
 
-            for (int i = DataSetDaly.Count - 1; i >= 0; i--)
+            for (int i = 0; i < DataSetDaly.Count; i++)
             {
                 ProgressBar.Value++;
                 if (DataSetDaly[i].TrueResult == true)
@@ -1004,6 +1008,10 @@ namespace Daly
                                     item.DataSurvivalMale.YLL = data_YLL.Item1;
                                     item.DataSurvivalFemale.YLL = data_YLL.Item2;
                                     item.DataSurvivalSumm.YLL = data_YLL.Item3;
+
+                                    item.DataSurvivalMale.YLL100000 = DataFunction.GetSurvival_YLL100000(DataSetDaly[i].MaleLife, data_YLL.Item1);
+                                    item.DataSurvivalFemale.YLL100000 = DataFunction.GetSurvival_YLL100000(DataSetDaly[i].FemaleLife, data_YLL.Item2);
+                                    item.DataSurvivalSumm.YLL100000 = DataFunction.GetSurvival_YLL100000(DataSetDaly[i].MaleLife + DataSetDaly[i].FemaleLife, data_YLL.Item3);
                                 }
                                 catch { }
                                 try
@@ -1039,7 +1047,7 @@ namespace Daly
         {
             int year = DataSetDaly.Year,
                 DataPopulation_Id = DataSetDaly.DataPopulation_Id;
-            if (DataPopulation_Id == 20)
+            if (DataPopulation_Id == 22)
                 return (1, 1, 1);
             if (DataPopulation_Id < 6)
             {
@@ -1166,7 +1174,7 @@ namespace Daly
                 return (100000, 100000, 100000);
             DataSetDaly data = DataDaly.DataSetDaly.First(u => u.DataPopulation_Id == DataSetDaly.DataPopulation_Id - 1 && u.Year == DataSetDaly.Year && u.DataRegion_Id == DataSetDaly.DataRegion_Id);
             DataSetDalyDiases DataSetDalyDiases = data.DataSetDalyDiases.First(u => u.DataDiases_Id == diaes);
-            if (DataSetDaly.DataPopulation_Id == 21)
+            if (DataSetDaly.DataPopulation_Id == 23)
                 return (DataSetDalyDiases.DataSurvivalMale.l, DataSetDalyDiases.DataSurvivalFemale.l, DataSetDalyDiases.DataSurvivalSumm.l);
             double data_male = DataSetDalyDiases.DataSurvivalMale.px * DataSetDalyDiases.DataSurvivalMale.l,
                 data_female = DataSetDalyDiases.DataSurvivalFemale.px * DataSetDalyDiases.DataSurvivalFemale.l,
@@ -1178,11 +1186,11 @@ namespace Daly
         {
             return 1.0 - GetSurvival_qx_val;
         }
-        //вероятность умереть в данном возрасте возраст больше 75 лет
+        //вероятность умереть в данном возрасте возраст больше 85 лет
         public (double, double, double) GetSurvival_px_two(int diases_id, int population_id)
         {
             DataSurvivalPeriod_70_year data = DataDaly.DataSurvivalPeriod_70_year.First(u => u.DataSetDalyDiases_Id == diases_id);
-            int[] arr_population = { 21, 22, 23, 24 };
+            int[] arr_population = { 23, 24, 25 };
             int coeff = Array.IndexOf(arr_population, population_id);
             if (coeff == -1)
                 return (0, 0, 0);
@@ -1196,7 +1204,7 @@ namespace Daly
         {
             return GetSurvival_qx * GetSurvival_l;
         }
-        //число умерших в данном возрасте старше 75 лет
+        //число умерших в данном возрасте старше 85 лет
         public (double, double, double) GetSurvival_d_two(DataSetDaly DataSetDaly, int diases)
         {
             int period = DataSetDaly.DataPopulation_Id, period_next = period + 1;
@@ -1381,7 +1389,7 @@ namespace Daly
             DataSetDalyDiases d_diases = DataSetDaly.DataSetDalyDiases.First(u => u.DataDiases_Id == diases);
             DataPopulation popul = DataDaly.DataPopulation.First(u => u.Id == DataSetDaly.DataPopulation_Id);
             double K = DataDalyConstant.Constant_K, C = DataDalyConstant.Constant_C, r = DataDalyConstant.Discount_rate,
-                beta = DataDalyConstant.Beta, e = Math.E, rpb = r + beta, rmb = r - beta, a = popul.PeriodDied,
+                beta = DataDalyConstant.Beta, e = Math.E, rpb = r + beta, a = popul.PeriodDied,
                 N = DataDalyConstant.Constant_N,
                 L_m = d_diases.DataSurvivalMale.e0_2,
                 L_f = d_diases.DataSurvivalFemale.e0_2,
@@ -1391,15 +1399,20 @@ namespace Daly
                 coef_3 = (1.0 - K) / r;
 
             double male = d_diases.MaleDied * N * (coef_1 * (Math.Pow(e, -1.0 * rpb * (L_m + a))
-                * (-1.0 * rmb * (L_m + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_m))),
+                * (-1.0 * rpb * (L_m + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_m))),
 
                 female = d_diases.FemaleDied * N * (coef_1 * (Math.Pow(e, -1.0 * rpb * (L_f + a))
-                * (-1.0 * rmb * (L_f + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_f))),
+                * (-1.0 * rpb * (L_f + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_f))),
 
                 summ = (d_diases.MaleDied + d_diases.FemaleDied) * N * (coef_1 * (Math.Pow(e, -1.0 * rpb * (L_s + a))
-                * (-1.0 * rmb * (L_s + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_s)));
+                * (-1.0 * rpb * (L_s + a) - 1.0) - coef_2) + coef_3 * (1.0 - Math.Pow(e, -1.0 * r * L_s)));
 
             return (male, female, summ);
+        }
+        public double GetSurvival_YLL100000(double LifeAll, double YLL)
+        {
+            if (LifeAll == 0) return 0;
+            return 100000.0 * YLL / (double)LifeAll;
         }
         //расчет экономического ущерба
         public double GetSurvival_VRP(double GetSurvival_YLL_val, int year, int region)
@@ -1482,6 +1495,7 @@ namespace Daly
         public double mxl { get; set; }
         public double e0_2 { get; set; }
         public double YLL { get; set; }
+        public double YLL100000 { get; set; }
         public double VRP { get; set; }
     }
     public class DataSurvivalPeriod_0_year

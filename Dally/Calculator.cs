@@ -44,18 +44,18 @@ namespace Daly
                     vrp_all.Item1 += vrp.Item1;
                     vrp_all.Item2 += vrp.Item2;
                     vrp_all.Item3 += vrp.Item3;
-                    dataGridView1.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL), vrp.Item1);
-                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL), vrp.Item2);
-                    dataGridView3.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalSumm.e0_2), diases.Average(t => t.DataSurvivalSumm.YLL), vrp.Item3);
+                    dataGridView1.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL), diases.Average(t => t.DataSurvivalMale.YLL100000), vrp.Item1);
+                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL), diases.Average(t => t.DataSurvivalFemale.YLL100000), vrp.Item2);
+                    dataGridView3.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalSumm.e0_2), diases.Average(t => t.DataSurvivalSumm.YLL), diases.Average(t => t.DataSurvivalSumm.YLL100000), vrp.Item3);
                 }
             }
             dataGridView1.Rows.Add("Итого", "", "", vrp_all.Item1);
             dataGridView2.Rows.Add("Итого", "", "", vrp_all.Item2);
             dataGridView3.Rows.Add("Итого", "", "", vrp_all.Item3);
             List<int> max_count = new List<int>{
-            DataDaly.ActivDataYear_Id.Count(),
-            DataDaly.ActivDataRegion_Id.Count(),
-            DataDaly.ActivDataDiases_Id.Count()
+            DataDaly.ActivDataYear_Id.Count,
+            DataDaly.ActivDataRegion_Id.Count,
+            DataDaly.ActivDataDiases_Id.Count
             };
             int max = max_count.Max();
             for (int i = 0; i < max; i++)

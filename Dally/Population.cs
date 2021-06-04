@@ -22,10 +22,10 @@ namespace Daly
             && DataDaly.ActivDataRegion_Id.Any(t => t == u.DataRegion_Id) == true).ToList();
             foreach (var item in DataDaly.DataPopulation)
             {
-                if(item.Excel == true)
+                if (item.Excel == true)
                 {
                     List<DataSetDaly> data = DataSetDaly.Where(u => u.DataPopulation_Id == item.Id).ToList();
-                    dataGridView1.Rows.Add(item.Name, data.Sum(u=>u.MaleLife), data.Sum(u => u.MaleDied), data.Sum(u => u.MaleBirth), item.PeriodDied);
+                    dataGridView1.Rows.Add(item.Name, data.Sum(u => u.MaleLife), data.Sum(u => u.MaleDied), data.Sum(u => u.MaleBirth), item.PeriodDied);
                     dataGridView2.Rows.Add(item.Name, data.Sum(u => u.FemaleLife), data.Sum(u => u.FemaleDied), data.Sum(u => u.FemaleBirth), item.PeriodDied);
                 }
             }

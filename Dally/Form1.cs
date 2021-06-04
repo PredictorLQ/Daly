@@ -27,11 +27,18 @@ namespace Daly
         private readonly string path_data = "\\Умершие от рака.xlsx";
         private readonly string path_data_min = "\\ожидаемая продолжительность жизни.xlsx";
         private readonly string path_result = "\\Результаты";
-        private readonly string[] elem_max = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "YLL", "Потери (руб.)" };
-        private readonly string[] elem_min = { "e0", "mxl", "YLL", "Потери (руб.)" };
+        private readonly string[] elem_max = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "e0_2", "YLL", "YLL на 100000", "Потери (руб.)" };
+        private readonly string[] elem_min = { "e0", "mxl", "e0_2", "YLL", "YLL на 100000", "Потери (руб.)" };
         public static bool Error_Excel = false;
         public bool ControlSave = false;
         public bool ControlWrite = false;
+
+
+
+        //[DllImport("kernel32.dll", SetLastError = true)]
+        //[return: MarshalAs(UnmanagedType.Bool)]
+        //static extern bool AllocConsole();
+
         public Form1()
         {
             InitializeComponent();
@@ -170,21 +177,21 @@ namespace Daly
 
                     DataDaly.GetSurvival(progressBar3);
                     progressBar3.Value = progressBar3.Maximum;
-                    MessageBox.Show("Данные успешно преробразованы");
+                    MessageBox.Show("Данные успешно преобразованы");
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
                     label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
                     label8.Visible = true;
-                }
-                catch
-                {
-                    MessageBox.Show("Error: Преобразование фатально");
-                }
-                finally
-                {
-                    excel.Quit();
-                    GC.Collect();
-                }
             }
+                catch
+            {
+                MessageBox.Show("Error: Преобразование фатально");
+            }
+            finally
+            {
+                excel.Quit();
+                GC.Collect();
+            }
+        }
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -208,7 +215,7 @@ namespace Daly
 
                     DataDaly.GetSurvivalMin(progressBar3);
                     progressBar3.Value = progressBar3.Maximum;
-                    MessageBox.Show("Данные успешно получены и преробразованы");
+                    MessageBox.Show("Данные успешно получены и преобразованы");
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
                     label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
                     label8.Visible = true;
@@ -282,10 +289,15 @@ namespace Daly
         }
         private void saveDALYDataToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ControlSelectLitbox() == true)
+            if (ControlSelectLitbox())
             {
+                saveFileDialog1.Filter = "xls files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+                saveFileDialog1.FilterIndex = 1;
+                saveFileDialog1.RestoreDirectory = true;
+                if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
                 bool max = DataDaly.SelectPaket == 1;
-                int interval = max ? 13 : 6, start = 1, intrevla2 = max ? 8 : 1;
+                int interval = max ? elem_max.Length + 2 : elem_min.Length + 2, start = 1, intrevla2 = max ? 8 : 1;
                 string[] elem = max ? elem_max : elem_min;
                 string path = @Application.StartupPath.ToString() + path_result, prepend = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1] + " - ";
                 DirectoryInfo dirInfo = new DirectoryInfo(path);
@@ -312,7 +324,7 @@ namespace Daly
                         int start_row = 1;
                         for (int j = 0; j < DataDaly.ActivDataDiases_Id.Count; j++)
                         {
-                            DataDiases DataDiases = DataDaly.DataDiases.FirstOrDefault(u => u.Id == DataDaly.ActivDataDiases_Id[i]);
+                            DataDiases DataDiases = DataDaly.DataDiases.FirstOrDefault(u => u.Id == DataDaly.ActivDataDiases_Id[j]);
                             if (DataDiases != null)
                             {
                                 for (int l = 0; l < count_year; l++)
@@ -334,9 +346,9 @@ namespace Daly
                                     (double, double, double) vrp_all = (0, 0, 0);
                                     for (int k = 0; k < count_popul.Count; k++)
                                     {
+                                        start_row++;
                                         try
                                         {
-                                            start_row++;
                                             DataSetDaly DataSetDaly = DataDaly.DataSetDaly.FirstOrDefault(u => u.DataPopulation_Id == count_popul[k].Id
                                             && u.Year == DataDaly.ActivDataYear_Id[l]
                                             && u.DataRegion_Id == DataDaly.ActivDataRegion_Id[i]);
@@ -371,19 +383,22 @@ namespace Daly
                                                 xlNewSheet.Cells[start_row, start + interval * 2 + 6] = diases.DataSurvivalSumm.L;
                                                 xlNewSheet.Cells[start_row, start + interval * 2 + 7] = diases.DataSurvivalSumm.T;
                                             }
+
                                             xlNewSheet.Cells[start_row, start + intrevla2] = diases.DataSurvivalMale.e0;
                                             xlNewSheet.Cells[start_row, start + intrevla2 + 1] = diases.DataSurvivalMale.mxl;
+                                            xlNewSheet.Cells[start_row, start + intrevla2 + 2] = diases.DataSurvivalMale.e0_2;
 
-                                            xlNewSheet.Cells[start_row, start + interval + intrevla2] = diases.DataSurvivalMale.e0;
-                                            xlNewSheet.Cells[start_row, start + interval + intrevla2 + 1] = diases.DataSurvivalMale.mxl;
+                                            xlNewSheet.Cells[start_row, start + interval + intrevla2] = diases.DataSurvivalFemale.e0;
+                                            xlNewSheet.Cells[start_row, start + interval + intrevla2 + 1] = diases.DataSurvivalFemale.mxl;
+                                            xlNewSheet.Cells[start_row, start + interval + intrevla2 + 2] = diases.DataSurvivalFemale.e0_2;
 
                                             xlNewSheet.Cells[start_row, start + interval * 2 + intrevla2] = diases.DataSurvivalSumm.e0;
                                             xlNewSheet.Cells[start_row, start + interval * 2 + intrevla2 + 1] = diases.DataSurvivalSumm.mxl;
-
-                                            if (DataDaly.DataPopulation[k].Start_Daly_Bool == true)
+                                            xlNewSheet.Cells[start_row, start + interval * 2 + intrevla2 + 2] = diases.DataSurvivalSumm.e0_2;
+                                            if (count_popul[k].Start_Daly_Bool)
                                             {
                                                 (double, double, double) vrp = (diases.DataSurvivalMale.VRP, diases.DataSurvivalFemale.VRP, diases.DataSurvivalSumm.VRP);
-                                                if (DataDaly.DataPopulation[k].Id == 19)
+                                                if (count_popul[k].Id == 19)
                                                 {
                                                     vrp.Item1 /= 2.0;
                                                     vrp.Item2 /= 2.0;
@@ -394,14 +409,17 @@ namespace Daly
                                                 vrp_all.Item2 += vrp.Item2;
                                                 vrp_all.Item3 += vrp.Item3;
 
-                                                xlNewSheet.Cells[start_row, interval - 2] = diases.DataSurvivalMale.YLL;
+                                                xlNewSheet.Cells[start_row, interval - 3] = diases.DataSurvivalMale.YLL;
+                                                xlNewSheet.Cells[start_row, interval - 2] = diases.DataSurvivalMale.YLL100000;
                                                 xlNewSheet.Cells[start_row, interval - 1] = vrp.Item1;
 
-                                                xlNewSheet.Cells[start_row, interval * 2 - 2] = diases.DataSurvivalFemale.YLL;
+                                                xlNewSheet.Cells[start_row, interval * 2 - 3] = diases.DataSurvivalFemale.YLL;
+                                                xlNewSheet.Cells[start_row, interval * 2 - 2] = diases.DataSurvivalFemale.YLL100000;
                                                 xlNewSheet.Cells[start_row, interval * 2 - 1] = vrp.Item2;
 
                                                 xlNewSheet.Cells[start_row, interval * 3 - 3] = diases.DataSurvivalSumm.YLL;
-                                                xlNewSheet.Cells[start_row, interval * 3 - 2] = vrp.Item3;
+                                                xlNewSheet.Cells[start_row, interval * 3 - 2] = diases.DataSurvivalSumm.YLL100000;
+                                                xlNewSheet.Cells[start_row, interval * 3 - 1] = vrp.Item3;
                                             }
                                         }
                                         catch { }
@@ -425,11 +443,11 @@ namespace Daly
                     }
                     progressBar4.Value++;
                 }
-                string path_ex = path + "\\" + prepend + DateTime.Now.ToString().Replace(":", "-") + ".xlsx";
-                excel.Application.ActiveWorkbook.SaveAs(path_ex, Type.Missing,
+                excel.Application.ActiveWorkbook.SaveAs(saveFileDialog1.FileName, Type.Missing,
       Type.Missing, Type.Missing, Type.Missing, Type.Missing, Excel.XlSaveAsAccessMode.xlNoChange,
       Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-                //excel.Quit();
+                excel.Quit();
+                GC.Collect();
                 progressBar4.Value = progressBar1.Maximum;
                 label7.Visible = false;
                 progressBar4.Visible = false;
@@ -479,7 +497,6 @@ namespace Daly
 
         private void button10_Click(object sender, EventArgs e)
         {
-            bool all_diases = checkBox1.Checked, all_region = checkBox2.Checked, all_years = checkBox3.Checked;
             if (ControlSelectLitbox() == true)
             {
                 Calculator Calculator = new Calculator();
