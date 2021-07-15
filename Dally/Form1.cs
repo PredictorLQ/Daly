@@ -27,8 +27,8 @@ namespace Daly
         private readonly string path_data = "\\Умершие от рака.xlsx";
         private readonly string path_data_min = "\\ожидаемая продолжительность жизни.xlsx";
         private readonly string path_result = "\\Результаты";
-        private readonly string[] elem_max = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "e0_2", "YLL", "YLL на 100000", "Потери (руб.)" };
-        private readonly string[] elem_min = { "e0", "mxl", "e0_2", "YLL", "YLL на 100000", "Потери (руб.)" };
+        private readonly string[] elem_max = { "mx", "qx", "px", "l", "d", "L", "T", "e0", "mxl", "e0_2", "YLL", "YLL на 100000", "Потери (руб.)", "age-standardised YLL на 100 тыс.нас" };
+        private readonly string[] elem_min = { "e0", "mxl", "e0_2", "YLL", "YLL на 100000", "Потери (руб.)", "age-standardised YLL на 100 тыс.нас" };
         public static bool Error_Excel = false;
         public bool ControlSave = false;
         public bool ControlWrite = false;
@@ -48,7 +48,7 @@ namespace Daly
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            this.Icon = new Icon("logo_onco_vertical_ru.ico", 70, 70);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -181,17 +181,17 @@ namespace Daly
                     ControlSave = true; ControlWrite = true; button10.Enabled = ControlWrite;
                     label8.Text = DataDaly.SelectPaketName[DataDaly.SelectPaket - 1];
                     label8.Visible = true;
-            }
+                }
                 catch
-            {
-                MessageBox.Show("Error: Преобразование фатально");
+                {
+                    MessageBox.Show("Error: Преобразование фатально");
+                }
+                finally
+                {
+                    excel.Quit();
+                    GC.Collect();
+                }
             }
-            finally
-            {
-                excel.Quit();
-                GC.Collect();
-            }
-        }
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -409,17 +409,20 @@ namespace Daly
                                                 vrp_all.Item2 += vrp.Item2;
                                                 vrp_all.Item3 += vrp.Item3;
 
-                                                xlNewSheet.Cells[start_row, interval - 3] = diases.DataSurvivalMale.YLL;
-                                                xlNewSheet.Cells[start_row, interval - 2] = diases.DataSurvivalMale.YLL100000;
-                                                xlNewSheet.Cells[start_row, interval - 1] = vrp.Item1;
+                                                xlNewSheet.Cells[start_row, interval - 4] = diases.DataSurvivalMale.YLL;
+                                                xlNewSheet.Cells[start_row, interval - 3] = diases.DataSurvivalMale.YLL100000;
+                                                xlNewSheet.Cells[start_row, interval - 2] = vrp.Item1;
+                                                xlNewSheet.Cells[start_row, interval - 1] = diases.DataSurvivalMale.YLLWHO;
 
-                                                xlNewSheet.Cells[start_row, interval * 2 - 3] = diases.DataSurvivalFemale.YLL;
-                                                xlNewSheet.Cells[start_row, interval * 2 - 2] = diases.DataSurvivalFemale.YLL100000;
-                                                xlNewSheet.Cells[start_row, interval * 2 - 1] = vrp.Item2;
+                                                xlNewSheet.Cells[start_row, interval * 2 - 4] = diases.DataSurvivalFemale.YLL;
+                                                xlNewSheet.Cells[start_row, interval * 2 - 3] = diases.DataSurvivalFemale.YLL100000;
+                                                xlNewSheet.Cells[start_row, interval * 2 - 2] = vrp.Item2;
+                                                xlNewSheet.Cells[start_row, interval * 2 - 1] = diases.DataSurvivalFemale.YLLWHO;
 
-                                                xlNewSheet.Cells[start_row, interval * 3 - 3] = diases.DataSurvivalSumm.YLL;
-                                                xlNewSheet.Cells[start_row, interval * 3 - 2] = diases.DataSurvivalSumm.YLL100000;
-                                                xlNewSheet.Cells[start_row, interval * 3 - 1] = vrp.Item3;
+                                                xlNewSheet.Cells[start_row, interval * 3 - 4] = diases.DataSurvivalSumm.YLL;
+                                                xlNewSheet.Cells[start_row, interval * 3 - 3] = diases.DataSurvivalSumm.YLL100000;
+                                                xlNewSheet.Cells[start_row, interval * 3 - 2] = vrp.Item3;
+                                                xlNewSheet.Cells[start_row, interval * 3 - 1] = diases.DataSurvivalSumm.YLLWHO;
                                             }
                                         }
                                         catch { }

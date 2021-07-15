@@ -44,9 +44,9 @@ namespace Daly
                     vrp_all.Item1 += vrp.Item1;
                     vrp_all.Item2 += vrp.Item2;
                     vrp_all.Item3 += vrp.Item3;
-                    dataGridView1.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL), diases.Average(t => t.DataSurvivalMale.YLL100000), vrp.Item1);
-                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL), diases.Average(t => t.DataSurvivalFemale.YLL100000), vrp.Item2);
-                    dataGridView3.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalSumm.e0_2), diases.Average(t => t.DataSurvivalSumm.YLL), diases.Average(t => t.DataSurvivalSumm.YLL100000), vrp.Item3);
+                    dataGridView1.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalMale.e0_2), diases.Average(t => t.DataSurvivalMale.YLL), diases.Average(t => t.DataSurvivalMale.YLL100000), vrp.Item1, diases.Average(t => t.DataSurvivalMale.YLLWHO));
+                    dataGridView2.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalFemale.e0_2), diases.Average(t => t.DataSurvivalFemale.YLL), diases.Average(t => t.DataSurvivalFemale.YLL100000), vrp.Item2, diases.Average(t => t.DataSurvivalFemale.YLLWHO));
+                    dataGridView3.Rows.Add(item.Name, diases.Average(t => t.DataSurvivalSumm.e0_2), diases.Average(t => t.DataSurvivalSumm.YLL), diases.Average(t => t.DataSurvivalSumm.YLL100000), vrp.Item3, diases.Average(t => t.DataSurvivalSumm.YLLWHO));
                 }
             }
             dataGridView1.Rows.Add("Итого", "", "", vrp_all.Item1);
